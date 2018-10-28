@@ -17,7 +17,7 @@
 *.pch
 
 # Libraries
-*.lib
+#*.lib # kicad uses this format
 *.a
 *.la
 *.lo
