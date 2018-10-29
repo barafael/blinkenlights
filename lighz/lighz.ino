@@ -20,11 +20,12 @@ static const int LANDING_LIGHT_ENABLE_PIN = A3;
 static const int STANDBY_MODE_CHANNEL_PIN  = 2;
 static const int LANDING_LIGHT_CHANNEL_PIN = 3;
 
-/* These thresholds define when a mode should be active */
+/* These thresholds define when a mode should be active
+   (compared against RC PWM value on resp. pin) */
 static const uint64_t STANDBY_MODE_THRESHOLD  = 1500;
 static const uint64_t LANDING_LIGHT_THRESHOLD = 1500;
 
-/* standby and landing are read on startup */
+/* standby mode and landing light feature enabled-ness */
 static bool standby_mode_enabled  = false;
 static bool landing_light_enabled = false;
 
@@ -41,13 +42,13 @@ static const uint64_t MILLISECONDS_PER_CYCLE = 5000;
 static const uint64_t MILLISECONDS_PER_STEP  = MILLISECONDS_PER_CYCLE / COUNTER_MAX;
 
 /* If standby_mode_enabled:
-       if throttle is above threshold, enter FLYING mode
+       if threshold condition is met, enter STANDBY mode
    else:
-       always at FLYING mode
+       enter FLYING mode
    If landing_light_enabled:
-       if landing_light_channel is above threshold, turn on lights
+       if  threshold condition is met, turn on lights
    else:
-       landing lights always off
+       lights off
 */
 typedef enum { FLYING, STANDBY } flying_state_t;
 
@@ -67,7 +68,7 @@ static volatile uint64_t landing_channel_rise;
 static volatile uint64_t landing_channel_pulse_time;
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(250000);
 
     pinMode(TEST_PIN, OUTPUT);
 
@@ -98,23 +99,17 @@ void setup() {
     pinMode(STANDBY_MODE_CHANNEL_PIN,  INPUT);
     pinMode(LANDING_LIGHT_CHANNEL_PIN, INPUT);
 
-    /* Read if jumpers present (active low) */
-    standby_mode_enabled  = digitalRead(STANDBY_MODE_ENABLE_PIN) == LOW;
-    landing_light_enabled = digitalRead(LANDING_LIGHT_ENABLE_PIN) == LOW;
-
-    /* attach interrupts if standby or landing light enabled */
-    if (standby_mode_enabled) {
-        attachInterrupt(digitalPinToInterrupt(STANDBY_MODE_CHANNEL_PIN), standby_channel_interrupt, CHANGE);
-    } else {
-        /* If mode not enabled, state is always FLYING */
-        current_state.fly_state = FLYING;
-    }
-    if (landing_light_enabled) {
-        attachInterrupt(digitalPinToInterrupt(LANDING_LIGHT_CHANNEL_PIN), landing_channel_interrupt, CHANGE);
-    }
+    /* attach interrupts even if modes are not enabled right now */
+    attachInterrupt(digitalPinToInterrupt(STANDBY_MODE_CHANNEL_PIN), standby_channel_interrupt, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(LANDING_LIGHT_CHANNEL_PIN), landing_channel_interrupt, CHANGE);
 }
 
 void loop() {
+    /* Read if jumpers present (active low) */
+    standby_mode_enabled  = digitalRead(STANDBY_MODE_ENABLE_PIN)  == LOW;
+    landing_light_enabled = digitalRead(LANDING_LIGHT_ENABLE_PIN) == LOW;
+
+    /* Set mode to standby only if mode is enabled */
     if (standby_mode_enabled) {
         if (standby_channel_pulse_time < STANDBY_MODE_THRESHOLD) {
             current_state.fly_state = STANDBY;
@@ -122,6 +117,7 @@ void loop() {
             current_state.fly_state = FLYING;
         }
     } else {
+        /* If mode not enabled, state is FLYING */
         current_state.fly_state = FLYING;
     }
 
@@ -167,32 +163,32 @@ void loop() {
 
 static void update_test_pin(uint64_t tick, state_t state) {
     switch(state.fly_state) {
-        case FLYING:
-            switch(tick) {
-                case 0 ... 500:
-                    digitalWrite(TEST_PIN, LOW);
-                    break;
-                default:
-                    digitalWrite(TEST_PIN, HIGH);
-                    break;
-            }
+    case FLYING:
+        switch(tick) {
+        case 0 ... 500:
+            digitalWrite(TEST_PIN, LOW);
             break;
-        case STANDBY:
-            switch(tick) {
-                case 0 ... 100:
-                    digitalWrite(TEST_PIN, LOW);
-                    break;
-                case 101 ... 200:
-                    digitalWrite(TEST_PIN, HIGH);
-                    break;
-                case 201 ... 300:
-                    digitalWrite(TEST_PIN, LOW);
-                    break;
-                default:
-                    digitalWrite(TEST_PIN, HIGH);
-                    break;
-            }
+        default:
+            digitalWrite(TEST_PIN, HIGH);
             break;
+        }
+        break;
+    case STANDBY:
+        switch(tick) {
+        case 0 ... 100:
+            digitalWrite(TEST_PIN, LOW);
+            break;
+        case 101 ... 200:
+            digitalWrite(TEST_PIN, HIGH);
+            break;
+        case 201 ... 300:
+            digitalWrite(TEST_PIN, LOW);
+            break;
+        default:
+            digitalWrite(TEST_PIN, HIGH);
+            break;
+        }
+        break;
     }
 }
 
@@ -247,4 +243,3 @@ static void landing_channel_interrupt() {
         landing_channel_pulse_time = micros() - landing_channel_rise;
     }
 }
-
