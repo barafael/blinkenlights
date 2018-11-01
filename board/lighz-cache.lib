@@ -93,6 +93,23 @@ X Pin_2 2 200 -100 150 L 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
+# Connector_Generic_Conn_01x01
+#
+DEF Connector_Generic_Conn_01x01 J 0 40 Y N 1 F N
+F0 "J" 0 100 50 H V C CNN
+F1 "Connector_Generic_Conn_01x01" 0 -100 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ Connector*:*
+$ENDFPLIST
+DRAW
+S -50 5 0 -5 1 1 6 N
+S -50 50 50 -50 1 1 10 f
+X Pin_1 1 -200 0 150 R 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
 # Connector_Generic_Conn_01x03
 #
 DEF Connector_Generic_Conn_01x03 J 0 40 Y N 1 F N
@@ -199,6 +216,25 @@ P 5 0 1 8 210 -20 150 -20 180 30 210 -20 210 -20 N
 X D D 100 200 100 D 40 40 1 1 P
 X G G -200 0 150 R 40 40 1 1 I
 X S S 100 -200 100 U 40 40 1 1 P
+ENDDRAW
+ENDDEF
+#
+# freetronics_schematic_POT
+#
+DEF freetronics_schematic_POT VR 0 40 Y N 1 F N
+F0 "VR" 0 -100 50 H V C CNN
+F1 "freetronics_schematic_POT" 0 0 50 H V C CNN
+F2 "" 0 0 60 H V C CNN
+F3 "" 0 0 60 H V C CNN
+$FPLIST
+ POT_*
+$ENDFPLIST
+DRAW
+S -150 50 150 -50 0 1 0 N
+P 3 0 1 0 0 50 -20 70 20 70 F
+X 1 1 -250 0 100 R 40 40 1 1 P
+X 2 2 250 0 100 L 40 40 1 1 P
+X W W 0 150 80 D 40 40 1 1 P
 ENDDRAW
 ENDDEF
 #

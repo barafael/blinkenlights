@@ -394,4 +394,49 @@ Wire Wire Line
 Connection ~ 3900 3710
 Wire Notes Line
 	4590 3710 4500 3710
+$Comp
+L freetronics_schematic:POT VR1
+U 1 1 5BDB7813
+P 6490 4210
+F 0 "VR1" V 6536 4133 50  0000 R CNN
+F 1 "POT" V 6445 4133 50  0000 R CNN
+F 2 "Potentiometer_THT:Potentiometer_Piher_T-16H_Single_Horizontal" H 6490 4210 60  0001 C CNN
+F 3 "" H 6490 4210 60  0000 C CNN
+	1    6490 4210
+	0    -1   -1   0   
+$EndComp
+Text GLabel 6490 3960 1    50   Input ~ 0
+VCC
+$Comp
+L power:GND #PWR01
+U 1 1 5BDB79D4
+P 6490 4460
+F 0 "#PWR01" H 6490 4210 50  0001 C CNN
+F 1 "GND" H 6495 4287 50  0000 C CNN
+F 2 "" H 6490 4460 50  0001 C CNN
+F 3 "" H 6490 4460 50  0001 C CNN
+	1    6490 4460
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6340 4210 5790 4210
+Text GLabel 6250 4210 3    50   Input ~ 0
+thresh_set
+$Comp
+L Connector_Generic:Conn_01x01 J22
+U 1 1 5BDB8277
+P 6700 4800
+F 0 "J22" H 6779 4842 50  0000 L CNN
+F 1 "DBG_PIN" H 6779 4751 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical" H 6700 4800 50  0001 C CNN
+F 3 "~" H 6700 4800 50  0001 C CNN
+	1    6700 4800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6500 4800 6170 4800
+Wire Wire Line
+	6170 4800 6170 4510
+Wire Wire Line
+	6170 4510 5790 4510
 $EndSCHEMATC
