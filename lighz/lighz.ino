@@ -1,13 +1,15 @@
-static const int TEST_PIN = 13;
+#include <DigitalIO.h>
 
-static const int D5_PIN  = 5;
-static const int D6_PIN  = 6;
-static const int D8_PIN  = 8;
-static const int D9_PIN  = 9;
-static const int D10_PIN = 10;
-static const int D11_PIN = 11;
-static const int D14_PIN = 14;
-static const int D15_PIN = 15;
+static const DigitalPin<13> TEST_PIN;
+
+static const DigitalPin<5>  D5_PIN;
+static const DigitalPin<6>  D6_PIN;
+static const DigitalPin<8>  D8_PIN;
+static const DigitalPin<9>  D9_PIN;
+static const DigitalPin<10> D10_PIN;
+static const DigitalPin<11> D11_PIN;
+static const DigitalPin<14> D14_PIN;
+static const DigitalPin<15> D15_PIN;
 
 /* standby blinking and landing lights are optional features.
    They can be set by jumpers on these pins */
@@ -38,7 +40,7 @@ static const uint64_t COUNTER_MAX = 1000;
 
 /* loop wait time MILLISECONDS_PER_STEP is such that one entire counter cycle
    takes MILLISECONDS_PER_CYCLE milliseconds */
-static const uint64_t MILLISECONDS_PER_CYCLE = 5000;
+static const uint64_t MILLISECONDS_PER_CYCLE = 3000;
 static const uint64_t MILLISECONDS_PER_STEP  = MILLISECONDS_PER_CYCLE / COUNTER_MAX;
 
 /* If standby_mode_enabled:
@@ -70,28 +72,28 @@ static volatile uint64_t landing_channel_pulse_time;
 void setup() {
     Serial.begin(250000);
 
-    pinMode(TEST_PIN, OUTPUT);
+    TEST_PIN.mode(OUTPUT);
 
-    pinMode(D5_PIN,  OUTPUT);
-    pinMode(D6_PIN,  OUTPUT);
-    pinMode(D8_PIN,  OUTPUT);
-    pinMode(D9_PIN,  OUTPUT);
-    pinMode(D10_PIN, OUTPUT);
-    pinMode(D11_PIN, OUTPUT);
-    pinMode(D14_PIN, OUTPUT);
-    pinMode(D15_PIN, OUTPUT);
+    D5_PIN.mode (OUTPUT);
+    D6_PIN.mode (OUTPUT);
+    D8_PIN.mode (OUTPUT);
+    D9_PIN.mode (OUTPUT);
+    D10_PIN.mode(OUTPUT);
+    D11_PIN.mode(OUTPUT);
+    D14_PIN.mode(OUTPUT);
+    D15_PIN.mode(OUTPUT);
 
     /* Turn off the lights */
-    digitalWrite(TEST_PIN, LOW);
+    TEST_PIN.low();
 
-    digitalWrite(D5_PIN,  LOW);
-    digitalWrite(D6_PIN,  LOW);
-    digitalWrite(D8_PIN,  LOW);
-    digitalWrite(D9_PIN,  LOW);
-    digitalWrite(D10_PIN, LOW);
-    digitalWrite(D11_PIN, LOW);
-    digitalWrite(D14_PIN, LOW);
-    digitalWrite(D15_PIN, LOW);
+    D5_PIN. low();
+    D6_PIN. low();
+    D8_PIN. low();
+    D9_PIN. low();
+    D10_PIN.low();
+    D11_PIN.low();
+    D14_PIN.low();
+    D15_PIN.low();
 
     pinMode(STANDBY_MODE_ENABLE_PIN,  INPUT);
     pinMode(LANDING_LIGHT_ENABLE_PIN, INPUT);
@@ -161,31 +163,46 @@ void loop() {
 #endif
 }
 
+#define cycle_fraction(a, b) \
+    (int)(((double)(a)/(double)(b)) * COUNTER_MAX)
+
 static void update_test_pin(uint64_t tick, state_t state) {
     switch(state.fly_state) {
     case FLYING:
         switch(tick) {
-        case 0 ... 500:
-            digitalWrite(TEST_PIN, LOW);
+        case 0:
+            TEST_PIN.high();
             break;
-        default:
-            digitalWrite(TEST_PIN, HIGH);
+        case cycle_fraction(4, 10):
+            TEST_PIN.low();
+            break;
+        case cycle_fraction(5, 10):
+            TEST_PIN.high();
+            break;
+        case cycle_fraction(9, 10):
+            TEST_PIN.low();
             break;
         }
         break;
     case STANDBY:
         switch(tick) {
-        case 0 ... 100:
-            digitalWrite(TEST_PIN, LOW);
+        case 0:
+            TEST_PIN.high();
             break;
-        case 101 ... 200:
-            digitalWrite(TEST_PIN, HIGH);
+        case cycle_fraction(1, 10):
+            TEST_PIN.low();
             break;
-        case 201 ... 300:
-            digitalWrite(TEST_PIN, LOW);
+        case cycle_fraction(2, 10):
+            TEST_PIN.high();
             break;
-        default:
-            digitalWrite(TEST_PIN, HIGH);
+        case cycle_fraction(3, 10):
+            TEST_PIN.low();
+            break;
+        case cycle_fraction(9, 10):
+            TEST_PIN.high();
+            break;
+        case cycle_fraction(9.25, 10):
+            TEST_PIN.low();
             break;
         }
         break;
@@ -194,38 +211,167 @@ static void update_test_pin(uint64_t tick, state_t state) {
 
 static void updateOutput_D5(uint64_t tick, state_t state) {
     if (state.landing_light_active) {
-        digitalWrite(D5_PIN, HIGH);
+        D5_PIN.high();
     } else {
-        digitalWrite(D5_PIN, LOW);
+        D5_PIN.low();
     }
 }
 
 static void updateOutput_D6(uint64_t tick, state_t state) {
-    digitalWrite(D6_PIN, HIGH);
+    if (state.fly_state == FLYING) {
+        switch (tick) {
+            case 0:
+                D6_PIN.high();
+                break;
+            case cycle_fraction(1, 70):
+                D6_PIN.low();
+                break;
+            case cycle_fraction(2, 70):
+                D6_PIN.high();
+                break;
+            case cycle_fraction(3, 70):
+                D6_PIN.low();
+                break;
+            case cycle_fraction(4, 70):
+                D6_PIN.high();
+                break;
+            case cycle_fraction(5, 70):
+                D6_PIN.low();
+                break;
+            case cycle_fraction(6, 70):
+                D6_PIN.high();
+                break;
+            case cycle_fraction(7, 70):
+                D6_PIN.low();
+                break;
+            case cycle_fraction(8, 70):
+                D6_PIN.high();
+                break;
+            case cycle_fraction(9, 70):
+                D6_PIN.low();
+                break;
+            case cycle_fraction(10, 70):
+                D6_PIN.high();
+                break;
+            case cycle_fraction(11, 70):
+                D6_PIN.low();
+                break;
+            case cycle_fraction(5, 10):
+                D6_PIN.high();
+                break;
+            case cycle_fraction(7.5, 10):
+                D6_PIN.low();
+                break;
+        }
+    } else if (state.fly_state == STANDBY) {
+        if (tick < 500) {
+            D6_PIN.high();
+        } else {
+            D6_PIN.low();
+        }
+    }
 }
 
 static void updateOutput_D8(uint64_t tick, state_t state) {
-    digitalWrite(D8_PIN, HIGH);
+    switch(tick) {
+        case 0:
+            D8_PIN.high();
+            break;
+        case cycle_fraction(3, 10):
+            D8_PIN.low();
+            break;
+        case cycle_fraction(6, 10):
+            D8_PIN.high();
+            break;
+        case cycle_fraction(9, 10):
+            D8_PIN.low();
+            break;
+    }
 }
 
 static void updateOutput_D9(uint64_t tick, state_t state) {
-    digitalWrite(D9_PIN, HIGH);
+    switch(tick) {
+        case 0:
+            D9_PIN.low();
+            break;
+        case cycle_fraction(3, 10):
+            D9_PIN.high();
+            break;
+        case cycle_fraction(6, 10):
+            D9_PIN.low();
+            break;
+        case cycle_fraction(9, 10):
+            D9_PIN.high();
+            break;
+    }
 }
 
 static void updateOutput_D10(uint64_t tick, state_t state) {
-    digitalWrite(D10_PIN, HIGH);
+    switch(tick) {
+        case 0:
+            D10_PIN.high();
+            break;
+        case cycle_fraction(3, 10):
+            D10_PIN.low();
+            break;
+        case cycle_fraction(6, 10):
+            D10_PIN.high();
+            break;
+        case cycle_fraction(9, 10):
+            D10_PIN.low();
+            break;
+    }
 }
 
 static void updateOutput_D11(uint64_t tick, state_t state) {
-    digitalWrite(D11_PIN, HIGH);
+    switch(tick) {
+        case 0:
+            D11_PIN.low();
+            break;
+        case cycle_fraction(3, 10):
+            D11_PIN.high();
+            break;
+        case cycle_fraction(6, 10):
+            D11_PIN.low();
+            break;
+        case cycle_fraction(9, 10):
+            D11_PIN.high();
+            break;
+    }
 }
 
 static void updateOutput_D14(uint64_t tick, state_t state) {
-    digitalWrite(D14_PIN, HIGH);
+    switch(tick) {
+        case 0:
+            D14_PIN.high();
+            break;
+        case cycle_fraction(3, 10):
+            D14_PIN.low();
+            break;
+        case cycle_fraction(6, 10):
+            D14_PIN.high();
+            break;
+        case cycle_fraction(9, 10):
+            D14_PIN.low();
+            break;
+    }
 }
 
 static void updateOutput_D15(uint64_t tick, state_t state) {
-    digitalWrite(D15_PIN, HIGH);
+    switch(tick) {
+        case 0:
+            D15_PIN.low();
+            break;
+        case cycle_fraction(3, 10):
+            D15_PIN.high();
+            break;
+        case cycle_fraction(6, 10):
+            D15_PIN.low();
+            break;
+        case cycle_fraction(9, 10):
+            D15_PIN.high();
+            break;
+    }
 }
 
 static void standby_channel_interrupt() {
