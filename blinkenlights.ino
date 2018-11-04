@@ -172,16 +172,16 @@ void loop() {
         current_state.brake_active = false;
     }
 
-    update_test_pin (counter, current_state);
+    update_test_pin (counter, &current_state);
 
-    updateOutput_D5 (counter, current_state);
-    updateOutput_D6 (counter, current_state);
-    updateOutput_D8 (counter, current_state);
-    updateOutput_D9 (counter, current_state);
-    updateOutput_D10(counter, current_state);
-    updateOutput_D11(counter, current_state);
-    updateOutput_D14(counter, current_state);
-    updateOutput_D15(counter, current_state);
+    updateOutput_D5 (counter, &current_state);
+    updateOutput_D6 (counter, &current_state);
+    updateOutput_D8 (counter, &current_state);
+    updateOutput_D9 (counter, &current_state);
+    updateOutput_D10(counter, &current_state);
+    updateOutput_D11(counter, &current_state);
+    updateOutput_D14(counter, &current_state);
+    updateOutput_D15(counter, &current_state);
 
     if (counter < COUNTER_MAX) {
         counter++;
@@ -201,15 +201,25 @@ void loop() {
     Serial.print("\t");
     Serial.print("Landing channel: ");
     Serial.print((long)landing_channel_pulse_time);
-    Serial.println("\t");
+    Serial.print("\t");
+    Serial.print("Brake channel: ");
+    Serial.print((long)brake_channel_pulse_time);
+    Serial.println("");
+#else
+#ifdef DEBUG_GRAPH
+Serial.print((long)brake_channel_pulse_time);
+    Serial.print("\t");
+Serial.println((long)standby_channel_pulse_time);
+
+#endif
 #endif
 }
 
 #define cycle_fraction(a, b) \
     (int)(((double)(a)/(double)(b)) * COUNTER_MAX)
 
-static void update_test_pin(uint64_t tick, state_t state) {
-    switch(state.fly_state) {
+static void update_test_pin(uint64_t tick, state_t *state) {
+    switch(state->fly_state) {
     case FLYING:
         switch(tick) {
         case 0:
@@ -251,16 +261,16 @@ static void update_test_pin(uint64_t tick, state_t state) {
     }
 }
 
-static void updateOutput_D5(uint64_t tick, state_t state) {
-    if (state.landing_light_active) {
+static void updateOutput_D5(uint64_t tick, state_t *state) {
+    if (state->landing_light_active) {
         D5_PIN.high();
     } else {
         D5_PIN.low();
     }
 }
 
-static void updateOutput_D6(uint64_t tick, state_t state) {
-    if (state.fly_state == FLYING) {
+static void updateOutput_D6(uint64_t tick, state_t *state) {
+    if (state->fly_state == FLYING) {
         switch (tick) {
             case 0:
                 D6_PIN.high();
@@ -305,7 +315,7 @@ static void updateOutput_D6(uint64_t tick, state_t state) {
                 D6_PIN.low();
                 break;
         }
-    } else if (state.fly_state == STANDBY) {
+    } else if (state->fly_state == STANDBY) {
         if (tick < 500) {
             D6_PIN.high();
         } else {
@@ -314,7 +324,7 @@ static void updateOutput_D6(uint64_t tick, state_t state) {
     }
 }
 
-static void updateOutput_D8(uint64_t tick, state_t state) {
+static void updateOutput_D8(uint64_t tick, state_t *state) {
     switch(tick) {
         case 0:
             D8_PIN.high();
@@ -331,7 +341,7 @@ static void updateOutput_D8(uint64_t tick, state_t state) {
     }
 }
 
-static void updateOutput_D9(uint64_t tick, state_t state) {
+static void updateOutput_D9(uint64_t tick, state_t *state) {
     switch(tick) {
         case 0:
             D9_PIN.low();
@@ -348,7 +358,7 @@ static void updateOutput_D9(uint64_t tick, state_t state) {
     }
 }
 
-static void updateOutput_D10(uint64_t tick, state_t state) {
+static void updateOutput_D10(uint64_t tick, state_t *state) {
     switch(tick) {
         case 0:
             D10_PIN.high();
@@ -365,7 +375,7 @@ static void updateOutput_D10(uint64_t tick, state_t state) {
     }
 }
 
-static void updateOutput_D11(uint64_t tick, state_t state) {
+static void updateOutput_D11(uint64_t tick, state_t *state) {
     switch(tick) {
         case 0:
             D11_PIN.low();
@@ -382,7 +392,7 @@ static void updateOutput_D11(uint64_t tick, state_t state) {
     }
 }
 
-static void updateOutput_D14(uint64_t tick, state_t state) {
+static void updateOutput_D14(uint64_t tick, state_t *state) {
     switch(tick) {
         case 0:
             D14_PIN.high();
@@ -399,7 +409,7 @@ static void updateOutput_D14(uint64_t tick, state_t state) {
     }
 }
 
-static void updateOutput_D15(uint64_t tick, state_t state) {
+static void updateOutput_D15(uint64_t tick, state_t *state) {
     switch(tick) {
         case 0:
             D15_PIN.low();
