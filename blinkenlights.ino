@@ -1,15 +1,15 @@
 #include <DigitalIO.h>
 
-static const DigitalPin<13> TEST_PIN;
+static DigitalPin<13> TEST_PIN;
 
-static const DigitalPin<5>  D5_PIN;
-static const DigitalPin<6>  D6_PIN;
-static const DigitalPin<8>  D8_PIN;
-static const DigitalPin<9>  D9_PIN;
-static const DigitalPin<10> D10_PIN;
-static const DigitalPin<11> D11_PIN;
-static const DigitalPin<14> D14_PIN;
-static const DigitalPin<15> D15_PIN;
+static DigitalPin<5>  D5_PIN;
+static DigitalPin<6>  D6_PIN;
+static DigitalPin<8>  D8_PIN;
+static DigitalPin<9>  D9_PIN;
+static DigitalPin<10> D10_PIN;
+static DigitalPin<11> D11_PIN;
+static DigitalPin<14> D14_PIN;
+static DigitalPin<15> D15_PIN;
 
 /* standby blinking and landing lights are optional features.
    They can be set by jumpers on these pins */
