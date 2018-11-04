@@ -1,3 +1,8 @@
+#include <PinChangeInterrupt.h>
+#include <PinChangeInterruptBoards.h>
+#include <PinChangeInterruptPins.h>
+#include <PinChangeInterruptSettings.h>
+
 #include <DigitalIO.h>
 
 static DigitalPin<13> TEST_PIN;
@@ -21,6 +26,7 @@ static const int LANDING_LIGHT_ENABLE_PIN = A3;
 // Only these two pins support real interrupts on the pro mini
 static const int STANDBY_MODE_CHANNEL_PIN  = 2;
 static const int LANDING_LIGHT_CHANNEL_PIN = 3;
+static const int BRAKE_CHANNEL_PIN = A2;
 
 /* These thresholds define when a mode should be active
    (compared against RC PWM value on resp. pin) */
@@ -58,9 +64,13 @@ typedef struct {
     flying_state_t fly_state;
     /* Flag indicates if landing light should be on */
     bool landing_light_active;
+    bool brake_active;
 } state_t;
 
-static state_t current_state = { STANDBY, false };
+static state_t current_state = { STANDBY, false, false };
+
+// Flag invalid RC PWM pulse signal
+#define NO_SIGNAL (-1)
 
 /* Variables to measure pulse duration of RC PWM pulse
    volatile because shared with interrupts */
@@ -68,9 +78,12 @@ static volatile uint64_t standby_channel_rise;
 static volatile uint64_t standby_channel_pulse_time_shared;
 static volatile uint64_t landing_channel_rise;
 static volatile uint64_t landing_channel_pulse_time_shared;
+static volatile uint64_t brake_channel_rise;
+static volatile uint64_t brake_channel_pulse_time_shared;
 
-static uint64_t standby_channel_pulse_time;
-static uint64_t landing_channel_pulse_time;
+static uint64_t standby_channel_pulse_time = NO_SIGNAL;
+static uint64_t landing_channel_pulse_time = NO_SIGNAL;
+static uint64_t brake_channel_pulse_time = NO_SIGNAL;
 
 void setup() {
     Serial.begin(250000);
@@ -103,10 +116,12 @@ void setup() {
 
     pinMode(STANDBY_MODE_CHANNEL_PIN,  INPUT);
     pinMode(LANDING_LIGHT_CHANNEL_PIN, INPUT);
+    pinMode(BRAKE_CHANNEL_PIN, INPUT);
 
     /* attach interrupts even if modes are not enabled right now */
     attachInterrupt(digitalPinToInterrupt(STANDBY_MODE_CHANNEL_PIN), standby_channel_interrupt, CHANGE);
     attachInterrupt(digitalPinToInterrupt(LANDING_LIGHT_CHANNEL_PIN), landing_channel_interrupt, CHANGE);
+    attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(BRAKE_CHANNEL_PIN), brake_channel_interrupt, CHANGE);
 }
 
 void loop() {
@@ -114,7 +129,19 @@ void loop() {
     noInterrupts();
     standby_channel_pulse_time = standby_channel_pulse_time_shared;
     landing_channel_pulse_time = landing_channel_pulse_time_shared;
+    brake_channel_pulse_time    = brake_channel_pulse_time_shared;
     interrupts();
+
+    /* Set NO_SIGNAL when there is no valid PWM pulse on the input */
+    if (standby_channel_pulse_time < 500 || standby_channel_pulse_time > 3000) {
+        standby_channel_pulse_time = NO_SIGNAL;
+    }
+    if (landing_channel_pulse_time < 500 || landing_channel_pulse_time > 3000) {
+        landing_channel_pulse_time = NO_SIGNAL;
+    }
+    if (brake_channel_pulse_time < 500 || brake_channel_pulse_time > 3000) {
+        brake_channel_pulse_time = NO_SIGNAL;
+    }
 
     /* Read if jumpers present (active low) */
     standby_mode_enabled  = digitalRead(STANDBY_MODE_ENABLE_PIN)  == LOW;
@@ -137,6 +164,12 @@ void loop() {
             landing_channel_pulse_time < LANDING_LIGHT_THRESHOLD;
     } else {
         current_state.landing_light_active = false;
+    }
+
+    if (brake_channel_pulse_time > 1500) {
+        current_state.brake_active = true;
+    } else {
+        current_state.brake_active = false;
     }
 
     update_test_pin (counter, current_state);
@@ -396,5 +429,14 @@ static void landing_channel_interrupt() {
         landing_channel_rise = micros();
     } else {
         landing_channel_pulse_time_shared = micros() - landing_channel_rise;
+    }
+}
+
+static void brake_channel_interrupt() {
+    uint8_t trigger = getPinChangeInterruptTrigger(digitalPinToPCINT(BRAKE_CHANNEL_PIN));
+    if(trigger == RISING) {
+        brake_channel_rise = micros();
+    } else if(trigger == FALLING) {
+        brake_channel_pulse_time_shared = micros() - brake_channel_rise;
     }
 }
