@@ -65,9 +65,12 @@ static state_t current_state = { STANDBY, false };
 /* Variables to measure pulse duration of RC PWM pulse
    volatile because shared with interrupts */
 static volatile uint64_t standby_channel_rise;
-static volatile uint64_t standby_channel_pulse_time;
+static volatile uint64_t standby_channel_pulse_time_shared;
 static volatile uint64_t landing_channel_rise;
-static volatile uint64_t landing_channel_pulse_time;
+static volatile uint64_t landing_channel_pulse_time_shared;
+
+static uint64_t standby_channel_pulse_time;
+static uint64_t landing_channel_pulse_time;
 
 void setup() {
     Serial.begin(250000);
@@ -107,6 +110,12 @@ void setup() {
 }
 
 void loop() {
+    /* Copy over shared variables */
+    noInterrupts();
+    standby_channel_pulse_time = standby_channel_pulse_time_shared;
+    landing_channel_pulse_time = landing_channel_pulse_time_shared;
+    interrupts();
+
     /* Read if jumpers present (active low) */
     standby_mode_enabled  = digitalRead(STANDBY_MODE_ENABLE_PIN)  == LOW;
     landing_light_enabled = digitalRead(LANDING_LIGHT_ENABLE_PIN) == LOW;
@@ -378,7 +387,7 @@ static void standby_channel_interrupt() {
     if (digitalRead(STANDBY_MODE_CHANNEL_PIN) == HIGH) {
         standby_channel_rise = micros();
     } else {
-        standby_channel_pulse_time = micros() - standby_channel_rise;
+        standby_channel_pulse_time_shared = micros() - standby_channel_rise;
     }
 }
 
@@ -386,6 +395,6 @@ static void landing_channel_interrupt() {
     if (digitalRead(LANDING_LIGHT_CHANNEL_PIN) == HIGH) {
         landing_channel_rise = micros();
     } else {
-        landing_channel_pulse_time = micros() - landing_channel_rise;
+        landing_channel_pulse_time_shared = micros() - landing_channel_rise;
     }
 }
