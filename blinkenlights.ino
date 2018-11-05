@@ -23,7 +23,7 @@ static DigitalPin<15> D15_PIN;
 // Only 2, 3 pins support real interrupts on the pro mini
 static const int STANDBY_MODE_CHANNEL_PIN  = 2;
 static const int LANDING_LIGHT_CHANNEL_PIN = 3;
-static const int BRAKE_CHANNEL_PIN = A2;
+static const int BRAKE_CHANNEL_PIN         = A2;
 
 /* These thresholds define when a mode should be active
    (compared against RC PWM value on resp. pin) */
@@ -74,7 +74,7 @@ static volatile uint64_t brake_channel_pulse_time_shared;
 /* Non-volatile, non-shared variables to access pulse time */
 static uint64_t standby_channel_pulse_time = NO_SIGNAL;
 static uint64_t landing_channel_pulse_time = NO_SIGNAL;
-static uint64_t brake_channel_pulse_time = NO_SIGNAL;
+static uint64_t brake_channel_pulse_time   = NO_SIGNAL;
 
 void setup() {
     Serial.begin(250000);
@@ -93,10 +93,10 @@ void setup() {
     /* Turn off the lights */
     TEST_PIN.low();
 
-    D5_PIN. low();
-    D6_PIN. low();
-    D8_PIN. low();
-    D9_PIN. low();
+    D5_PIN.low();
+    D6_PIN.low();
+    D8_PIN.low();
+    D9_PIN.low();
     D10_PIN.low();
     D11_PIN.low();
     D14_PIN.low();
@@ -107,7 +107,7 @@ void setup() {
     pinMode(BRAKE_CHANNEL_PIN,         INPUT);
 
     /* Attach interrupts for pulse time measurement */
-    attachInterrupt(digitalPinToInterrupt(STANDBY_MODE_CHANNEL_PIN), standby_channel_interrupt, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(STANDBY_MODE_CHANNEL_PIN),  standby_channel_interrupt, CHANGE);
     attachInterrupt(digitalPinToInterrupt(LANDING_LIGHT_CHANNEL_PIN), landing_channel_interrupt, CHANGE);
 
     /* Use PinChangeInterrupt for pins other than 2, 3 */
@@ -131,7 +131,7 @@ void loop() {
     noInterrupts();
     standby_channel_pulse_time = standby_channel_pulse_time_shared;
     landing_channel_pulse_time = landing_channel_pulse_time_shared;
-    brake_channel_pulse_time    = brake_channel_pulse_time_shared;
+    brake_channel_pulse_time   = brake_channel_pulse_time_shared;
     interrupts();
 
     /* Set NO_SIGNAL when there is no valid PWM pulse on the input */
@@ -162,8 +162,7 @@ void loop() {
     }
 
     if (landing_light_enabled) {
-        current_state.landing_light_active =
-            landing_channel_pulse_time < LANDING_LIGHT_THRESHOLD;
+        current_state.landing_light_active = landing_channel_pulse_time < LANDING_LIGHT_THRESHOLD;
     } else {
         current_state.landing_light_active = false;
     }
@@ -174,12 +173,12 @@ void loop() {
         current_state.brake_active = false;
     }
 
-    update_test_pin (counter, &current_state);
+    update_test_pin(counter, &current_state);
 
-    updateOutput_D5 (counter, &current_state);
-    updateOutput_D6 (counter, &current_state);
-    updateOutput_D8 (counter, &current_state);
-    updateOutput_D9 (counter, &current_state);
+    updateOutput_D5(counter,  &current_state);
+    updateOutput_D6(counter,  &current_state);
+    updateOutput_D8(counter,  &current_state);
+    updateOutput_D9(counter,  &current_state);
     updateOutput_D10(counter, &current_state);
     updateOutput_D11(counter, &current_state);
     updateOutput_D14(counter, &current_state);
@@ -190,19 +189,19 @@ void loop() {
     if ((now - standby_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
         // ignoring interrupt here, assumption is that it won't been triggered
         // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
-        standby_channel_pulse_time = NO_SIGNAL;
+        standby_channel_pulse_time        = NO_SIGNAL;
         standby_channel_pulse_time_shared = NO_SIGNAL;
     }
     if ((now - landing_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
         // ignoring interrupt here, assumption is that it won't been triggered
         // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
-        landing_channel_pulse_time = NO_SIGNAL;
+        landing_channel_pulse_time        = NO_SIGNAL;
         landing_channel_pulse_time_shared = NO_SIGNAL;
     }
     if ((now - brake_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
         // ignoring interrupt here, assumption is that it won't been triggered
         // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
-        brake_channel_pulse_time = NO_SIGNAL;
+        brake_channel_pulse_time        = NO_SIGNAL;
         brake_channel_pulse_time_shared = NO_SIGNAL;
     }
 
@@ -217,75 +216,54 @@ void loop() {
 //#define DEBUG_GRAPH
 #ifdef DEBUG_PRINT
     Serial.print("Counter: ");
-    Serial.print((long)counter);
+    Serial.print((long) counter);
     Serial.print("\t");
     Serial.print("Standby channel: ");
-    Serial.print((long)standby_channel_pulse_time);
+    Serial.print((long) standby_channel_pulse_time);
     Serial.print("\t");
     Serial.print("Landing channel: ");
-    Serial.print((long)landing_channel_pulse_time);
+    Serial.print((long) landing_channel_pulse_time);
     Serial.print("\t");
     Serial.print("Brake channel: ");
-    Serial.print((long)brake_channel_pulse_time);
+    Serial.print((long) brake_channel_pulse_time);
     Serial.println("");
 #else
 #ifdef DEBUG_GRAPH
-Serial.print((long)brake_channel_pulse_time);
+    Serial.print((long) brake_channel_pulse_time);
     Serial.print("\t");
-Serial.println((long)standby_channel_pulse_time);
+    Serial.println((long) standby_channel_pulse_time);
 #endif
 #endif
 
     /* Block until MILLISECONDS_PER_STEP have passed */
-    while((millis() - loop_start_millis) < MILLISECONDS_PER_STEP);
+    while ((millis() - loop_start_millis) < MILLISECONDS_PER_STEP);
 }
 
 /* A macro to statically compute a fraction of the steps for a complete cycle.
  * By computing the fraction this way, a blink pattern code is independent of the
  * number of steps per cycle. */
-#define cycle_fraction(a, b) \
-    (int)(((double)(a)/(double)(b)) * COUNTER_MAX)
+#define cycle_fraction(a, b) (int) (((double) (a) / (double) (b)) * COUNTER_MAX)
 
 static void update_test_pin(uint64_t tick, state_t *state) {
-    switch(state->mode) {
-    case FLYING:
-        switch(tick) {
-        case 0:
-            TEST_PIN.high();
+    switch (state->mode) {
+        case FLYING:
+            switch (tick) {
+                case 0: TEST_PIN.high(); break;
+                case cycle_fraction(4, 10): TEST_PIN.low();  break;
+                case cycle_fraction(5, 10): TEST_PIN.high(); break;
+                case cycle_fraction(9, 10): TEST_PIN.low();  break;
+            }
             break;
-        case cycle_fraction(4, 10):
-            TEST_PIN.low();
+        case STANDBY:
+            switch (tick) {
+                case 0: TEST_PIN.high(); break ;
+                case cycle_fraction(1, 10):    TEST_PIN.low();  break;
+                case cycle_fraction(2, 10):    TEST_PIN.high(); break;
+                case cycle_fraction(3, 10):    TEST_PIN.low();  break;
+                case cycle_fraction(9, 10):    TEST_PIN.high(); break;
+                case cycle_fraction(9.25, 10): TEST_PIN.low();  break ;
+            }
             break;
-        case cycle_fraction(5, 10):
-            TEST_PIN.high();
-            break;
-        case cycle_fraction(9, 10):
-            TEST_PIN.low();
-            break;
-        }
-        break;
-    case STANDBY:
-        switch(tick) {
-        case 0:
-            TEST_PIN.high();
-            break;
-        case cycle_fraction(1, 10):
-            TEST_PIN.low();
-            break;
-        case cycle_fraction(2, 10):
-            TEST_PIN.high();
-            break;
-        case cycle_fraction(3, 10):
-            TEST_PIN.low();
-            break;
-        case cycle_fraction(9, 10):
-            TEST_PIN.high();
-            break;
-        case cycle_fraction(9.25, 10):
-            TEST_PIN.low();
-            break;
-        }
-        break;
     }
 }
 
@@ -300,48 +278,20 @@ static void updateOutput_D5(uint64_t tick, state_t *state) {
 static void updateOutput_D6(uint64_t tick, state_t *state) {
     if (state->mode == FLYING) {
         switch (tick) {
-            case 0:
-                D6_PIN.high();
-                break;
-            case cycle_fraction(1, 70):
-                D6_PIN.low();
-                break;
-            case cycle_fraction(2, 70):
-                D6_PIN.high();
-                break;
-            case cycle_fraction(3, 70):
-                D6_PIN.low();
-                break;
-            case cycle_fraction(4, 70):
-                D6_PIN.high();
-                break;
-            case cycle_fraction(5, 70):
-                D6_PIN.low();
-                break;
-            case cycle_fraction(6, 70):
-                D6_PIN.high();
-                break;
-            case cycle_fraction(7, 70):
-                D6_PIN.low();
-                break;
-            case cycle_fraction(8, 70):
-                D6_PIN.high();
-                break;
-            case cycle_fraction(9, 70):
-                D6_PIN.low();
-                break;
-            case cycle_fraction(10, 70):
-                D6_PIN.high();
-                break;
-            case cycle_fraction(11, 70):
-                D6_PIN.low();
-                break;
-            case cycle_fraction(5, 10):
-                D6_PIN.high();
-                break;
-            case cycle_fraction(7.5, 10):
-                D6_PIN.low();
-                break;
+            case 0: D6_PIN.high(); break;
+            case cycle_fraction(1, 70):   D6_PIN.low();  break;
+            case cycle_fraction(2, 70):   D6_PIN.high(); break;
+            case cycle_fraction(3, 70):   D6_PIN.low();  break;
+            case cycle_fraction(4, 70):   D6_PIN.high(); break;
+            case cycle_fraction(5, 70):   D6_PIN.low();  break;
+            case cycle_fraction(6, 70):   D6_PIN.high(); break;
+            case cycle_fraction(7, 70):   D6_PIN.low();  break;
+            case cycle_fraction(8, 70):   D6_PIN.high(); break;
+            case cycle_fraction(9, 70):   D6_PIN.low();  break;
+            case cycle_fraction(10, 70):  D6_PIN.high(); break;
+            case cycle_fraction(11, 70):  D6_PIN.low();  break;
+            case cycle_fraction(5, 10):   D6_PIN.high(); break;
+            case cycle_fraction(7.5, 10): D6_PIN.low();  break;
         }
     } else if (state->mode == STANDBY) {
         if (tick < 500) {
@@ -353,104 +303,56 @@ static void updateOutput_D6(uint64_t tick, state_t *state) {
 }
 
 static void updateOutput_D8(uint64_t tick, state_t *state) {
-    switch(tick) {
-        case 0:
-            D8_PIN.high();
-            break;
-        case cycle_fraction(3, 10):
-            D8_PIN.low();
-            break;
-        case cycle_fraction(6, 10):
-            D8_PIN.high();
-            break;
-        case cycle_fraction(9, 10):
-            D8_PIN.low();
-            break;
+    switch (tick) {
+        case 0: D8_PIN.high(); break;
+        case cycle_fraction(3, 10): D8_PIN.low();  break;
+        case cycle_fraction(6, 10): D8_PIN.high(); break;
+        case cycle_fraction(9, 10): D8_PIN.low();  break;
     }
 }
 
 static void updateOutput_D9(uint64_t tick, state_t *state) {
-    switch(tick) {
-        case 0:
-            D9_PIN.low();
-            break;
-        case cycle_fraction(3, 10):
-            D9_PIN.high();
-            break;
-        case cycle_fraction(6, 10):
-            D9_PIN.low();
-            break;
-        case cycle_fraction(9, 10):
-            D9_PIN.high();
-            break;
+    switch (tick) {
+        case 0: D9_PIN.low(); break;
+        case cycle_fraction(3, 10): D9_PIN.high(); break;
+        case cycle_fraction(6, 10): D9_PIN.low();  break;
+        case cycle_fraction(9, 10): D9_PIN.high(); break;
     }
 }
 
 static void updateOutput_D10(uint64_t tick, state_t *state) {
-    switch(tick) {
-        case 0:
-            D10_PIN.high();
-            break;
-        case cycle_fraction(3, 10):
-            D10_PIN.low();
-            break;
-        case cycle_fraction(6, 10):
-            D10_PIN.high();
-            break;
-        case cycle_fraction(9, 10):
-            D10_PIN.low();
-            break;
+    switch (tick) {
+        case 0: D10_PIN.high(); break;
+        case cycle_fraction(3, 10): D10_PIN.low();  break;
+        case cycle_fraction(6, 10): D10_PIN.high(); break;
+        case cycle_fraction(9, 10): D10_PIN.low();  break;
     }
 }
 
 static void updateOutput_D11(uint64_t tick, state_t *state) {
-    switch(tick) {
-        case 0:
-            D11_PIN.low();
-            break;
-        case cycle_fraction(3, 10):
-            D11_PIN.high();
-            break;
-        case cycle_fraction(6, 10):
-            D11_PIN.low();
-            break;
-        case cycle_fraction(9, 10):
-            D11_PIN.high();
-            break;
+    switch (tick) {
+        case 0: D11_PIN.low(); break;
+        case cycle_fraction(3, 10): D11_PIN.high(); break;
+        case cycle_fraction(6, 10): D11_PIN.low();  break;
+        case cycle_fraction(9, 10): D11_PIN.high(); break;
     }
 }
 
 static void updateOutput_D14(uint64_t tick, state_t *state) {
-    switch(tick) {
-        case 0:
-            D14_PIN.high();
-            break;
-        case cycle_fraction(3, 10):
-            D14_PIN.low();
-            break;
-        case cycle_fraction(6, 10):
-            D14_PIN.high();
-            break;
-        case cycle_fraction(9, 10):
-            D14_PIN.low();
-            break;
+    switch (tick) {
+        case 0: D14_PIN.high(); break;
+        case cycle_fraction(3, 10): D14_PIN.low();  break;
+        case cycle_fraction(6, 10): D14_PIN.high(); break;
+        case cycle_fraction(9, 10): D14_PIN.low();  break;
     }
 }
 
 static void updateOutput_D15(uint64_t tick, state_t *state) {
-    switch(tick) {
-        case 0:
-            D15_PIN.low();
-            break;
-        case cycle_fraction(3, 10):
-            D15_PIN.high();
-            break;
-        case cycle_fraction(6, 10):
-            D15_PIN.low();
-            break;
-        case cycle_fraction(9, 10):
-            D15_PIN.high();
-            break;
+    switch (tick) {
+        case 0: D15_PIN.low(); break;
+        case cycle_fraction(3, 10): D15_PIN.high(); break;
+        case cycle_fraction(6, 10): D15_PIN.low();  break;
+        case cycle_fraction(9, 10): D15_PIN.high(); break;
     }
 }
 
@@ -472,9 +374,9 @@ static void landing_channel_interrupt() {
 
 static void brake_channel_interrupt() {
     uint8_t trigger = getPinChangeInterruptTrigger(digitalPinToPCINT(BRAKE_CHANNEL_PIN));
-    if(trigger == RISING) {
+    if (trigger == RISING) {
         brake_channel_rise = micros();
-    } else if(trigger == FALLING) {
+    } else if (trigger == FALLING) {
         brake_channel_pulse_time_shared = micros() - brake_channel_rise;
     }
 }
