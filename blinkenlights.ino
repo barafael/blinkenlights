@@ -126,6 +126,7 @@ void setup() {
 }
 
 void loop() {
+    uint64_t loop_start_millis() = millis();
     /* Copy over shared volatile variables */
     noInterrupts();
     standby_channel_pulse_time = standby_channel_pulse_time_shared;
@@ -212,8 +213,6 @@ void loop() {
         counter = 0;
     }
 
-    delay(MILLISECONDS_PER_STEP);
-
 //#define DEBUG_PRINT
 //#define DEBUG_GRAPH
 #ifdef DEBUG_PRINT
@@ -234,9 +233,11 @@ void loop() {
 Serial.print((long)brake_channel_pulse_time);
     Serial.print("\t");
 Serial.println((long)standby_channel_pulse_time);
+#endif
+#endif
 
-#endif
-#endif
+    /* Block until MILLISECONDS_PER_STEP have passed */
+    while((millis() - loop_start_millis) < MILLISECONDS_PER_STEP);
 }
 
 /* A macro to statically compute a fraction of the steps for a complete cycle.
