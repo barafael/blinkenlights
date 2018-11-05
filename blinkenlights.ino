@@ -61,7 +61,7 @@ static state_t current_state = { STANDBY, false, false };
 #define PWM_STALE_TIMEOUT_MICROS 20000
 
 // Flag invalid RC PWM pulse signal
-#define NO_SIGNAL (-1)
+#define NO_SIGNAL (0)
 
 /* Variables to measure pulse duration of RC PWM pulse
    volatile because shared with interrupts */
@@ -203,31 +203,36 @@ void loop() {
         static const uint64_t aux2_channel_rise    = aux2_channel_rise_shared;
         interrupts();
 
-        if ((now - standby_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        if ((now - standby_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
+                standby_channel_pulse_time > 2500) {
             // ignoring interrupt here, assumption is that it won't been triggered
             // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
             standby_channel_pulse_time        = NO_SIGNAL;
             standby_channel_pulse_time_shared = NO_SIGNAL;
         }
-        if ((now - landing_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        if ((now - landing_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
+                landing_channel_pulse_time > 2500) {
             // ignoring interrupt here, assumption is that it won't been triggered
             // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
             landing_channel_pulse_time        = NO_SIGNAL;
             landing_channel_pulse_time_shared = NO_SIGNAL;
         }
-        if ((now - brake_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        if ((now - brake_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
+                brake_channel_pulse_time > 2500) {
             // ignoring interrupt here, assumption is that it won't been triggered
             // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
             brake_channel_pulse_time        = NO_SIGNAL;
             brake_channel_pulse_time_shared = NO_SIGNAL;
         }
-        if ((now - aux1_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        if ((now - aux1_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
+                aux1_channel_pulse_time > 2500) {
             // ignoring interrupt here, assumption is that it won't been triggered
             // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
             aux1_channel_pulse_time        = NO_SIGNAL;
             aux1_channel_pulse_time_shared = NO_SIGNAL;
         }
-        if ((now - aux2_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        if ((now - aux2_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
+                aux2_channel_pulse_time > 2500) {
             // ignoring interrupt here, assumption is that it won't been triggered
             // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
             aux2_channel_pulse_time        = NO_SIGNAL;
