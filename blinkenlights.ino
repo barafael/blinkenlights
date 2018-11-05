@@ -16,14 +16,11 @@ static DigitalPin<11> D11_PIN;
 static DigitalPin<14> D14_PIN;
 static DigitalPin<15> D15_PIN;
 
-/* standby blinking and landing lights are optional features.
-   They can be set by jumpers on these pins */
-static const int STANDBY_MODE_ENABLE_PIN  = 4;
-static const int LANDING_LIGHT_ENABLE_PIN = A3;
+#define BUZZER_PIN 12
 
-/* To enter standby mode or activate landing lights,
-   apply an RC PWM signal to these pinns */
-// Only these two pins support real interrupts on the pro mini
+/* To enter standby mode, activate landing lights, or enable brakes etc.
+   apply an RC PWM signal to these pins */
+// Only 2, 3 pins support real interrupts on the pro mini
 static const int STANDBY_MODE_CHANNEL_PIN  = 2;
 static const int LANDING_LIGHT_CHANNEL_PIN = 3;
 static const int BRAKE_CHANNEL_PIN = A2;
@@ -32,10 +29,7 @@ static const int BRAKE_CHANNEL_PIN = A2;
    (compared against RC PWM value on resp. pin) */
 static const uint64_t STANDBY_MODE_THRESHOLD  = 1500;
 static const uint64_t LANDING_LIGHT_THRESHOLD = 1500;
-
-/* standby mode and landing light feature enabled-ness */
-static bool standby_mode_enabled  = false;
-static bool landing_light_enabled = false;
+static const uint64_t BRAKES_THRESHOLD        = 1500;
 
 /* Counter for main loop,
    subdivides each cycle into MILLISECONDS_PER_CYCLE steps*/
@@ -49,15 +43,6 @@ static const uint64_t COUNTER_MAX = 1000;
 static const uint64_t MILLISECONDS_PER_CYCLE = 3000;
 static const uint64_t MILLISECONDS_PER_STEP  = MILLISECONDS_PER_CYCLE / COUNTER_MAX;
 
-/* If standby_mode_enabled:
-       if threshold condition is met, enter STANDBY mode
-   else:
-       enter FLYING mode
-   If landing_light_enabled:
-       if  threshold condition is met, turn on lights
-   else:
-       lights off
-*/
 typedef enum { FLYING, STANDBY } flying_state_t;
 
 typedef struct {
@@ -69,6 +54,9 @@ typedef struct {
 
 static state_t current_state = { STANDBY, false, false };
 
+/* Time in microseconds after which an RC PWM signal is considered stale */
+#define PWM_STALE_TIMEOUT_MICROS 4000
+
 // Flag invalid RC PWM pulse signal
 #define NO_SIGNAL (-1)
 
@@ -76,11 +64,14 @@ static state_t current_state = { STANDBY, false, false };
    volatile because shared with interrupts */
 static volatile uint64_t standby_channel_rise;
 static volatile uint64_t standby_channel_pulse_time_shared;
+
 static volatile uint64_t landing_channel_rise;
 static volatile uint64_t landing_channel_pulse_time_shared;
+
 static volatile uint64_t brake_channel_rise;
 static volatile uint64_t brake_channel_pulse_time_shared;
 
+/* Non-volatile, non-shared variables to access pulse time */
 static uint64_t standby_channel_pulse_time = NO_SIGNAL;
 static uint64_t landing_channel_pulse_time = NO_SIGNAL;
 static uint64_t brake_channel_pulse_time = NO_SIGNAL;
@@ -111,21 +102,31 @@ void setup() {
     D14_PIN.low();
     D15_PIN.low();
 
-    pinMode(STANDBY_MODE_ENABLE_PIN,  INPUT);
-    pinMode(LANDING_LIGHT_ENABLE_PIN, INPUT);
-
     pinMode(STANDBY_MODE_CHANNEL_PIN,  INPUT);
     pinMode(LANDING_LIGHT_CHANNEL_PIN, INPUT);
-    pinMode(BRAKE_CHANNEL_PIN, INPUT);
+    pinMode(BRAKE_CHANNEL_PIN,         INPUT);
 
-    /* attach interrupts even if modes are not enabled right now */
+    /* Attach interrupts for pulse time measurement */
     attachInterrupt(digitalPinToInterrupt(STANDBY_MODE_CHANNEL_PIN), standby_channel_interrupt, CHANGE);
     attachInterrupt(digitalPinToInterrupt(LANDING_LIGHT_CHANNEL_PIN), landing_channel_interrupt, CHANGE);
+
+    /* Use PinChangeInterrupt for pins other than 2, 3 */
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(BRAKE_CHANNEL_PIN), brake_channel_interrupt, CHANGE);
+
+    /* Startup buzz */
+    tone(BUZZER_PIN, 880);
+    delay(200);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 1320);
+    delay(80);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 880);
+    delay(80);
+    noTone(BUZZER_PIN);
 }
 
 void loop() {
-    /* Copy over shared variables */
+    /* Copy over shared volatile variables */
     noInterrupts();
     standby_channel_pulse_time = standby_channel_pulse_time_shared;
     landing_channel_pulse_time = landing_channel_pulse_time_shared;
@@ -144,8 +145,8 @@ void loop() {
     }
 
     /* Read if jumpers present (active low) */
-    standby_mode_enabled  = digitalRead(STANDBY_MODE_ENABLE_PIN)  == LOW;
-    landing_light_enabled = digitalRead(LANDING_LIGHT_ENABLE_PIN) == LOW;
+    bool standby_mode_enabled  = standby_channel_pulse_time != NO_SIGNAL;
+    bool landing_light_enabled = landing_channel_pulse_time != NO_SIGNAL;
 
     /* Set mode to standby only if mode is enabled */
     if (standby_mode_enabled) {
@@ -183,6 +184,28 @@ void loop() {
     updateOutput_D14(counter, &current_state);
     updateOutput_D15(counter, &current_state);
 
+    /* Check for stale pulse time readings */
+    uint64_t now = micros();
+    if ((now - standby_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        // ignoring interrupt here, assumption is that it won't been triggered
+        // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
+        standby_channel_pulse_time = NO_SIGNAL;
+        standby_channel_pulse_time_shared = NO_SIGNAL;
+    }
+    if ((now - landing_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        // ignoring interrupt here, assumption is that it won't been triggered
+        // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
+        landing_channel_pulse_time = NO_SIGNAL;
+        landing_channel_pulse_time_shared = NO_SIGNAL;
+    }
+    if ((now - brake_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        // ignoring interrupt here, assumption is that it won't been triggered
+        // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
+        brake_channel_pulse_time = NO_SIGNAL;
+        brake_channel_pulse_time_shared = NO_SIGNAL;
+    }
+
+    /* Advance counter */
     if (counter < COUNTER_MAX) {
         counter++;
     } else {
@@ -192,6 +215,7 @@ void loop() {
     delay(MILLISECONDS_PER_STEP);
 
 //#define DEBUG_PRINT
+//#define DEBUG_GRAPH
 #ifdef DEBUG_PRINT
     Serial.print("Counter: ");
     Serial.print((long)counter);
@@ -215,6 +239,9 @@ Serial.println((long)standby_channel_pulse_time);
 #endif
 }
 
+/* A macro to statically compute a fraction of the steps for a complete cycle.
+ * By computing the fraction this way, a blink pattern code is independent of the
+ * number of steps per cycle. */
 #define cycle_fraction(a, b) \
     (int)(((double)(a)/(double)(b)) * COUNTER_MAX)
 
