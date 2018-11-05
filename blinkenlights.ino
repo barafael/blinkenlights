@@ -16,7 +16,7 @@ static DigitalPin<11> D11_PIN;
 static DigitalPin<14> D14_PIN;
 static DigitalPin<15> D15_PIN;
 
-#define BUZZER_PIN 12
+static const int BUZZER_PIN = 12;
 
 /* To enter standby mode, activate landing lights, or enable brakes etc.
    apply an RC PWM signal to these pins */
@@ -126,7 +126,7 @@ void setup() {
 }
 
 void loop() {
-    uint64_t loop_start_millis() = millis();
+    uint64_t loop_start_millis = millis();
     /* Copy over shared volatile variables */
     noInterrupts();
     standby_channel_pulse_time = standby_channel_pulse_time_shared;
