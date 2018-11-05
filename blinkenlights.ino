@@ -17,13 +17,16 @@ static DigitalPin<14> D14_PIN;
 static DigitalPin<15> D15_PIN;
 
 static const int BUZZER_PIN = 12;
+static const int DBG2_PIN   = 7;
 
 /* To enter standby mode, activate landing lights, or enable brakes etc.
    apply an RC PWM signal to these pins */
 // Only 2, 3 pins support real interrupts on the pro mini
 static const int STANDBY_MODE_CHANNEL_PIN  = 2;
 static const int LANDING_LIGHT_CHANNEL_PIN = 3;
-static const int BRAKE_CHANNEL_PIN         = A2;
+static const int BRAKE_CHANNEL_PIN         = 4;
+static const int AUX1_CHANNEL_PIN          = A3;
+static const int AUX2_CHANNEL_PIN          = A2;
 
 /* These thresholds define when a mode should be active
    (compared against RC PWM value on resp. pin) */
@@ -32,7 +35,7 @@ static const uint64_t LANDING_LIGHT_THRESHOLD = 1500;
 static const uint64_t BRAKES_THRESHOLD        = 1500;
 
 /* Counter for main loop,
-   subdivides each cycle into MILLISECONDS_PER_CYCLE steps*/
+   subdivides each cycle into MILLISECONDS_PER_CYCLE steps */
 static uint64_t counter = 0;
 
 /* The counter runs 0..COUNTER_MAX */
@@ -55,7 +58,7 @@ typedef struct {
 static state_t current_state = { STANDBY, false, false };
 
 /* Time in microseconds after which an RC PWM signal is considered stale */
-#define PWM_STALE_TIMEOUT_MICROS 4000
+#define PWM_STALE_TIMEOUT_MICROS 20000
 
 // Flag invalid RC PWM pulse signal
 #define NO_SIGNAL (-1)
@@ -71,10 +74,18 @@ static volatile uint64_t landing_channel_pulse_time_shared;
 static volatile uint64_t brake_channel_rise;
 static volatile uint64_t brake_channel_pulse_time_shared;
 
+static volatile uint64_t aux1_channel_rise;
+static volatile uint64_t aux1_channel_pulse_time_shared;
+
+static volatile uint64_t aux2_channel_rise;
+static volatile uint64_t aux2_channel_pulse_time_shared;
+
 /* Non-volatile, non-shared variables to access pulse time */
 static uint64_t standby_channel_pulse_time = NO_SIGNAL;
 static uint64_t landing_channel_pulse_time = NO_SIGNAL;
 static uint64_t brake_channel_pulse_time   = NO_SIGNAL;
+static uint64_t aux1_channel_pulse_time    = NO_SIGNAL;
+static uint64_t aux2_channel_pulse_time    = NO_SIGNAL;
 
 void setup() {
     Serial.begin(250000);
@@ -105,6 +116,8 @@ void setup() {
     pinMode(STANDBY_MODE_CHANNEL_PIN,  INPUT);
     pinMode(LANDING_LIGHT_CHANNEL_PIN, INPUT);
     pinMode(BRAKE_CHANNEL_PIN,         INPUT);
+    pinMode(AUX1_CHANNEL_PIN,          INPUT);
+    pinMode(AUX2_CHANNEL_PIN,          INPUT);
 
     /* Attach interrupts for pulse time measurement */
     attachInterrupt(digitalPinToInterrupt(STANDBY_MODE_CHANNEL_PIN),  standby_channel_interrupt, CHANGE);
@@ -112,6 +125,8 @@ void setup() {
 
     /* Use PinChangeInterrupt for pins other than 2, 3 */
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(BRAKE_CHANNEL_PIN), brake_channel_interrupt, CHANGE);
+    attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX1_CHANNEL_PIN),  aux1_channel_interrupt,  CHANGE);
+    attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX2_CHANNEL_PIN),  aux2_channel_interrupt,  CHANGE);
 
     /* Startup buzz */
     tone(BUZZER_PIN, 880);
@@ -132,18 +147,9 @@ void loop() {
     standby_channel_pulse_time = standby_channel_pulse_time_shared;
     landing_channel_pulse_time = landing_channel_pulse_time_shared;
     brake_channel_pulse_time   = brake_channel_pulse_time_shared;
+    aux1_channel_pulse_time    = aux1_channel_pulse_time_shared;
+    aux2_channel_pulse_time    = aux2_channel_pulse_time_shared;
     interrupts();
-
-    /* Set NO_SIGNAL when there is no valid PWM pulse on the input */
-    if (standby_channel_pulse_time < 500 || standby_channel_pulse_time > 3000) {
-        standby_channel_pulse_time = NO_SIGNAL;
-    }
-    if (landing_channel_pulse_time < 500 || landing_channel_pulse_time > 3000) {
-        landing_channel_pulse_time = NO_SIGNAL;
-    }
-    if (brake_channel_pulse_time < 500 || brake_channel_pulse_time > 3000) {
-        brake_channel_pulse_time = NO_SIGNAL;
-    }
 
     /* Read if jumpers present (active low) */
     bool standby_mode_enabled  = standby_channel_pulse_time != NO_SIGNAL;
@@ -204,7 +210,18 @@ void loop() {
         brake_channel_pulse_time        = NO_SIGNAL;
         brake_channel_pulse_time_shared = NO_SIGNAL;
     }
-
+    if ((now - aux1_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        // ignoring interrupt here, assumption is that it won't been triggered
+        // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
+        aux1_channel_pulse_time        = NO_SIGNAL;
+        aux1_channel_pulse_time_shared = NO_SIGNAL;
+    }
+    if ((now - aux2_channel_rise) > PWM_STALE_TIMEOUT_MICROS) {
+        // ignoring interrupt here, assumption is that it won't been triggered
+        // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
+        aux2_channel_pulse_time        = NO_SIGNAL;
+        aux2_channel_pulse_time_shared = NO_SIGNAL;
+    }
     /* Advance counter */
     if (counter < COUNTER_MAX) {
         counter++;
@@ -226,6 +243,12 @@ void loop() {
     Serial.print("\t");
     Serial.print("Brake channel: ");
     Serial.print((long) brake_channel_pulse_time);
+    Serial.print("\t");
+    Serial.print("AUX1 channel: ");
+    Serial.print((long) aux1_channel_pulse_time);
+    Serial.print("\t");
+    Serial.print("AUX2 channel: ");
+    Serial.print((long) aux2_channel_pulse_time);
     Serial.println("");
 #else
 #ifdef DEBUG_GRAPH
@@ -378,5 +401,23 @@ static void brake_channel_interrupt() {
         brake_channel_rise = micros();
     } else if (trigger == FALLING) {
         brake_channel_pulse_time_shared = micros() - brake_channel_rise;
+    }
+}
+
+static void aux1_channel_interrupt() {
+    uint8_t trigger = getPinChangeInterruptTrigger(digitalPinToPCINT(AUX1_CHANNEL_PIN));
+    if (trigger == RISING) {
+        aux1_channel_rise = micros();
+    } else if (trigger == FALLING) {
+        aux1_channel_pulse_time_shared = micros() - aux1_channel_rise;
+    }
+}
+
+static void aux2_channel_interrupt() {
+    uint8_t trigger = getPinChangeInterruptTrigger(digitalPinToPCINT(AUX2_CHANNEL_PIN));
+    if (trigger == RISING) {
+        aux2_channel_rise = micros();
+    } else if (trigger == FALLING) {
+        aux2_channel_pulse_time_shared = micros() - aux2_channel_rise;
     }
 }
