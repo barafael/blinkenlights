@@ -5,438 +5,576 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 9
-Title ""
-Date ""
-Rev ""
-Comp ""
+Title "Wolfgang Blinker"
+Date "2018-11-04"
+Rev "3"
+Comp "Rafael Bachmann"
 Comment1 ""
 Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
 $Sheet
-S 7080 5090 1690 940 
+S 7550 4790 1690 940 
 U 5BCF5261
 F0 "Sheet5BCF5260" 50
 F1 "file5BCF4F82.sch" 50
-F2 "SIGNAL_PWM" I L 7080 5580 50 
-F3 "VLiPo" I L 7080 5450 50 
+F2 "SIGNAL_PWM" I L 7550 5280 50 
+F3 "VLiPo" I L 7550 5150 50 
 $EndSheet
 $Sheet
-S 9090 5720 1560 940 
+S 9560 5420 1560 940 
 U 5BCF5267
 F0 "Sheet5BCF5266" 50
 F1 "file5BCF4F82.sch" 50
-F2 "SIGNAL_PWM" I L 9090 6340 50 
-F3 "VLiPo" I L 9090 6230 50 
+F2 "SIGNAL_PWM" I L 9560 6040 50 
+F3 "VLiPo" I L 9560 5930 50 
 $EndSheet
 $Sheet
-S 7080 3750 1690 940 
+S 7550 3450 1690 940 
 U 5BCF5272
 F0 "sheet5BCF5272" 50
 F1 "file5BCF4F82.sch" 50
-F2 "SIGNAL_PWM" I L 7080 4240 50 
-F3 "VLiPo" I L 7080 4090 50 
+F2 "SIGNAL_PWM" I L 7550 3940 50 
+F3 "VLiPo" I L 7550 3790 50 
 $EndSheet
 $Sheet
-S 9090 4370 1560 940 
+S 9560 4070 1560 940 
 U 5BCF5274
 F0 "sheet5BCF5274" 50
 F1 "file5BCF4F82.sch" 50
-F2 "SIGNAL_PWM" I L 9090 4890 50 
-F3 "VLiPo" I L 9090 4770 50 
+F2 "SIGNAL_PWM" I L 9560 4590 50 
+F3 "VLiPo" I L 9560 4470 50 
 $EndSheet
 $Sheet
-S 7080 2220 1690 940 
+S 7550 1920 1690 940 
 U 5BCF5276
 F0 "sheet5BCF5276" 50
 F1 "file5BCF4F82.sch" 50
-F2 "SIGNAL_PWM" I L 7080 2700 50 
-F3 "VLiPo" I L 7080 2580 50 
+F2 "SIGNAL_PWM" I L 7550 2400 50 
+F3 "VLiPo" I L 7550 2280 50 
 $EndSheet
 $Sheet
-S 9090 2850 1560 940 
+S 9560 2550 1560 940 
 U 5BCF5278
 F0 "sheet5BCF5278" 50
 F1 "file5BCF4F82.sch" 50
-F2 "SIGNAL_PWM" I L 9090 3360 50 
-F3 "VLiPo" I L 9090 3230 50 
+F2 "SIGNAL_PWM" I L 9560 3060 50 
+F3 "VLiPo" I L 9560 2930 50 
 $EndSheet
 $Sheet
-S 7080 880  1690 940 
+S 7550 580  1690 940 
 U 5BCF527A
 F0 "sheet5BCF527A" 50
 F1 "file5BCF4F82.sch" 50
-F2 "SIGNAL_PWM" I L 7080 1370 50 
-F3 "VLiPo" I L 7080 1210 50 
+F2 "SIGNAL_PWM" I L 7550 1070 50 
+F3 "VLiPo" I L 7550 910 50 
 $EndSheet
 $Sheet
-S 9090 1520 1560 940 
+S 9560 1220 1560 940 
 U 5BCF527C
 F0 "sheet5BCF527C" 50
 F1 "file5BCF4F82.sch" 50
-F2 "SIGNAL_PWM" I L 9090 2010 50 
-F3 "VLiPo" I L 9090 1850 50 
+F2 "SIGNAL_PWM" I L 9560 1710 50 
+F3 "VLiPo" I L 9560 1550 50 
 $EndSheet
 $Comp
-L Connector_Generic:Conn_01x03 J1
+L Connector_Generic:Conn_01x03 J4
 U 1 1 5BCF5A90
-P 2920 4360
-F 0 "J1" V 2793 4540 50  0000 L CNN
-F 1 "landing_mode_channel" V 2884 4540 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 2920 4360 50  0001 C CNN
-F 3 "~" H 2920 4360 50  0001 C CNN
-	1    2920 4360
+P 1930 2690
+F 0 "J4" V 1803 2870 50  0000 L CNN
+F 1 "standby_mode_channel" V 2050 2290 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1930 2690 50  0001 C CNN
+F 3 "~" H 1930 2690 50  0001 C CNN
+	1    1930 2690
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x03 J2
+L Connector_Generic:Conn_01x03 J5
 U 1 1 5BCF5B4E
-P 3630 4530
-F 0 "J2" V 3503 4710 50  0000 L CNN
-F 1 "standby_mode_channel" V 3594 4710 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 3630 4530 50  0001 C CNN
-F 3 "~" H 3630 4530 50  0001 C CNN
-	1    3630 4530
+P 1930 3200
+F 0 "J5" V 1803 3380 50  0000 L CNN
+F 1 "landing_mode_channel" V 2160 2850 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1930 3200 50  0001 C CNN
+F 3 "~" H 1930 3200 50  0001 C CNN
+	1    1930 3200
 	-1   0    0    1   
 $EndComp
-$Comp
-L freetronics_schematic:SW_SPST LANDING_MODE_ENABLE1
-U 1 1 5BD36A55
-P 2770 3430
-F 0 "LANDING_MODE_ENABLE1" H 2770 3740 70  0000 C CNN
-F 1 "SW_SPST" H 2770 3619 70  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 2770 3430 60  0001 C CNN
-F 3 "" H 2770 3430 60  0000 C CNN
-	1    2770 3430
-	1    0    0    -1  
-$EndComp
-$Comp
-L freetronics_schematic:SW_SPST STANDBY_MODE_ENABLE1
-U 1 1 5BD36C07
-P 2760 4010
-F 0 "STANDBY_MODE_ENABLE1" H 2760 4320 70  0000 C CNN
-F 1 "SW_SPST" H 2760 4199 70  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 2760 4010 60  0001 C CNN
-F 3 "" H 2760 4010 60  0000 C CNN
-	1    2760 4010
-	1    0    0    -1  
-$EndComp
-Text GLabel 5790 4410 2    50   Input ~ 0
+Text GLabel 5000 3400 2    50   Input ~ 0
 D14_sig
-Text GLabel 5790 4310 2    50   Input ~ 0
+Text GLabel 5000 3300 2    50   Input ~ 0
 D15_sig
-Text GLabel 4590 4410 0    50   Input ~ 0
+Text GLabel 3800 3400 0    50   Input ~ 0
 D5_sig
-Text GLabel 4590 4510 0    50   Input ~ 0
+Text GLabel 3800 3500 0    50   Input ~ 0
 D6_sig
-Text GLabel 4590 4710 0    50   Input ~ 0
+Text GLabel 3800 3700 0    50   Input ~ 0
 D8_sig
-Text GLabel 4590 4810 0    50   Input ~ 0
+Text GLabel 3800 3800 0    50   Input ~ 0
 D9_sig
-Text GLabel 5790 4810 2    50   Input ~ 0
+Text GLabel 5000 3800 2    50   Input ~ 0
 D10_sig
-Text GLabel 5790 4710 2    50   Input ~ 0
+Text GLabel 5000 3700 2    50   Input ~ 0
 D11_sig
-Text GLabel 7080 1370 0    50   Input ~ 0
+Text GLabel 7550 1070 0    50   Input ~ 0
 D15_sig
-Text GLabel 7080 2700 0    50   Input ~ 0
+Text GLabel 7550 2400 0    50   Input ~ 0
 D14_sig
-Text GLabel 7080 4240 0    50   Input ~ 0
+Text GLabel 7550 3940 0    50   Input ~ 0
 D5_sig
-Text GLabel 7080 5580 0    50   Input ~ 0
+Text GLabel 7550 5280 0    50   Input ~ 0
 D6_sig
-Text GLabel 9090 2010 0    50   Input ~ 0
+Text GLabel 9560 1710 0    50   Input ~ 0
 D8_sig
-Text GLabel 9090 3360 0    50   Input ~ 0
+Text GLabel 9560 3060 0    50   Input ~ 0
 D9_sig
-Text GLabel 9090 4890 0    50   Input ~ 0
+Text GLabel 9560 4590 0    50   Input ~ 0
 D10_sig
-Text GLabel 9090 6340 0    50   Input ~ 0
+Text GLabel 9560 6040 0    50   Input ~ 0
 D11_sig
-Wire Wire Line
-	3730 4010 3730 3710
-Wire Wire Line
-	3730 3710 3900 3710
 $Comp
-L power:GND #PWR0117
-U 1 1 5BD392A5
-P 2270 3430
-F 0 "#PWR0117" H 2270 3180 50  0001 C CNN
-F 1 "GND" V 2275 3302 50  0000 R CNN
-F 2 "" H 2270 3430 50  0001 C CNN
-F 3 "" H 2270 3430 50  0001 C CNN
-	1    2270 3430
-	0    1    1    0   
-$EndComp
-$Comp
-L power:GND #PWR0118
-U 1 1 5BD392C6
-P 2260 4010
-F 0 "#PWR0118" H 2260 3760 50  0001 C CNN
-F 1 "GND" V 2265 3882 50  0000 R CNN
-F 2 "" H 2260 4010 50  0001 C CNN
-F 3 "" H 2260 4010 50  0001 C CNN
-	1    2260 4010
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	3270 3430 3550 3430
-$Comp
-L Device:R R25
-U 1 1 5BD394AD
-P 3550 3280
-F 0 "R25" H 3620 3326 50  0000 L CNN
-F 1 "R" H 3620 3235 50  0000 L CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" V 3480 3280 50  0001 C CNN
-F 3 "~" H 3550 3280 50  0001 C CNN
-	1    3550 3280
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3550 3430 5960 3430
-Connection ~ 3550 3430
-$Comp
-L Device:R R26
-U 1 1 5BD39C52
-P 3900 3560
-F 0 "R26" H 3970 3606 50  0000 L CNN
-F 1 "R" H 3970 3515 50  0000 L CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" V 3830 3560 50  0001 C CNN
-F 3 "~" H 3900 3560 50  0001 C CNN
-	1    3900 3560
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Conn_01x02_Male J19
+L Connector:Conn_01x02_Male J9
 U 1 1 5BD3A4F5
-P 6270 3810
-F 0 "J19" H 6242 3690 50  0000 R CNN
-F 1 "power" H 6242 3781 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 6270 3810 50  0001 C CNN
-F 3 "~" H 6270 3810 50  0001 C CNN
-	1    6270 3810
+P 5480 2800
+F 0 "J9" H 5452 2680 50  0000 R CNN
+F 1 "power" H 5452 2771 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 5480 2800 50  0001 C CNN
+F 3 "~" H 5480 2800 50  0001 C CNN
+	1    5480 2800
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	6070 3710 5790 3710
+	5280 2700 5000 2700
 Wire Wire Line
-	5790 3810 6070 3810
-Text GLabel 5790 4010 2    50   Input ~ 0
-VCC
-Text GLabel 3550 3130 1    50   Input ~ 0
-VCC
-Text GLabel 3900 3410 1    50   Input ~ 0
+	5000 2800 5280 2800
+Text GLabel 5000 3000 2    50   Input ~ 0
 VCC
 $Comp
-L power:GND #PWR0119
+L power:GND #PWR05
 U 1 1 5BD3C121
-P 3120 4460
-F 0 "#PWR0119" H 3120 4210 50  0001 C CNN
-F 1 "GND" H 3125 4287 50  0000 C CNN
-F 2 "" H 3120 4460 50  0001 C CNN
-F 3 "" H 3120 4460 50  0001 C CNN
-	1    3120 4460
+P 2130 3300
+F 0 "#PWR05" H 2130 3050 50  0001 C CNN
+F 1 "GND" H 2135 3127 50  0000 C CNN
+F 2 "" H 2130 3300 50  0001 C CNN
+F 3 "" H 2130 3300 50  0001 C CNN
+	1    2130 3300
 	0    -1   -1   0   
 $EndComp
+$Comp
+L power:GND #PWR02
+U 1 1 5BD3CE7B
+P 2120 3790
+F 0 "#PWR02" H 2120 3540 50  0001 C CNN
+F 1 "GND" H 2125 3617 50  0000 C CNN
+F 2 "" H 2120 3790 50  0001 C CNN
+F 3 "" H 2120 3790 50  0001 C CNN
+	1    2120 3790
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR015
+U 1 1 5BD3D5AE
+P 5280 2800
+F 0 "#PWR015" H 5280 2550 50  0001 C CNN
+F 1 "GND" H 5285 2627 50  0000 C CNN
+F 2 "" H 5280 2800 50  0001 C CNN
+F 3 "" H 5280 2800 50  0001 C CNN
+	1    5280 2800
+	1    0    0    -1  
+$EndComp
+Connection ~ 5280 2800
+Text GLabel 5230 2700 1    50   Input ~ 0
+VLiPo
+Text GLabel 7550 2280 0    50   Input ~ 0
+VLiPo
+Text GLabel 7550 910  0    50   Input ~ 0
+VLiPo
+$Comp
+L Device:R R3
+U 1 1 5BD3EA4C
+P 2610 3250
+F 0 "R3" H 2680 3296 50  0000 L CNN
+F 1 "R" H 2680 3205 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 2540 3250 50  0001 C CNN
+F 3 "~" H 2610 3250 50  0001 C CNN
+	1    2610 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR08
+U 1 1 5BD3EAEE
+P 2610 3400
+F 0 "#PWR08" H 2610 3150 50  0001 C CNN
+F 1 "GND" H 2615 3227 50  0000 C CNN
+F 2 "" H 2610 3400 50  0001 C CNN
+F 3 "" H 2610 3400 50  0001 C CNN
+	1    2610 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R4
+U 1 1 5BD3EB32
+P 2610 3740
+F 0 "R4" H 2680 3786 50  0000 L CNN
+F 1 "R" H 2680 3695 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 2540 3740 50  0001 C CNN
+F 3 "~" H 2610 3740 50  0001 C CNN
+	1    2610 3740
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR09
+U 1 1 5BD3EBBD
+P 2610 3890
+F 0 "#PWR09" H 2610 3640 50  0001 C CNN
+F 1 "GND" H 2615 3717 50  0000 C CNN
+F 2 "" H 2610 3890 50  0001 C CNN
+F 3 "" H 2610 3890 50  0001 C CNN
+	1    2610 3890
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x01 J10
+U 1 1 5BDB8277
+P 5600 3500
+F 0 "J10" H 5679 3542 50  0000 L CNN
+F 1 "DBG_PIN" H 5679 3451 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical" H 5600 3500 50  0001 C CNN
+F 3 "~" H 5600 3500 50  0001 C CNN
+	1    5600 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR013
+U 1 1 5BDEF08C
+P 3800 3000
+F 0 "#PWR013" H 3800 2750 50  0001 C CNN
+F 1 "GND" H 3805 2827 50  0000 C CNN
+F 2 "" H 3800 3000 50  0001 C CNN
+F 3 "" H 3800 3000 50  0001 C CNN
+	1    3800 3000
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR01
+U 1 1 5BD392A5
+P 2110 4770
+F 0 "#PWR01" H 2110 4520 50  0001 C CNN
+F 1 "GND" H 2180 4590 50  0000 R CNN
+F 2 "" H 2110 4770 50  0001 C CNN
+F 3 "" H 2110 4770 50  0001 C CNN
+	1    2110 4770
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR04
+U 1 1 5BD392C6
+P 2130 2790
+F 0 "#PWR04" H 2130 2540 50  0001 C CNN
+F 1 "GND" H 2200 2620 50  0000 R CNN
+F 2 "" H 2130 2790 50  0001 C CNN
+F 3 "" H 2130 2790 50  0001 C CNN
+	1    2130 2790
+	0    -1   -1   0   
+$EndComp
+NoConn ~ 2130 3200
+NoConn ~ 2120 3690
+$Comp
+L Device:R R1
+U 1 1 5BDF6D78
+P 2600 4720
+F 0 "R1" H 2670 4766 50  0000 L CNN
+F 1 "R" H 2670 4675 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 2530 4720 50  0001 C CNN
+F 3 "~" H 2600 4720 50  0001 C CNN
+	1    2600 4720
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR06
+U 1 1 5BDF6EDF
+P 2600 4870
+F 0 "#PWR06" H 2600 4620 50  0001 C CNN
+F 1 "GND" H 2605 4697 50  0000 C CNN
+F 2 "" H 2600 4870 50  0001 C CNN
+F 3 "" H 2600 4870 50  0001 C CNN
+	1    2600 4870
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R2
+U 1 1 5BDF72B3
+P 2610 2740
+F 0 "R2" H 2680 2786 50  0000 L CNN
+F 1 "R" H 2680 2695 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 2540 2740 50  0001 C CNN
+F 3 "~" H 2610 2740 50  0001 C CNN
+	1    2610 2740
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR07
+U 1 1 5BDF72B9
+P 2610 2890
+F 0 "#PWR07" H 2610 2640 50  0001 C CNN
+F 1 "GND" H 2615 2717 50  0000 C CNN
+F 2 "" H 2610 2890 50  0001 C CNN
+F 3 "" H 2610 2890 50  0001 C CNN
+	1    2610 2890
+	1    0    0    -1  
+$EndComp
+Text Notes 1200 2180 0    50   ~ 0
+pull downs on PWM sig experimental - see what pulldown value RC PWM is ok with\notherwise, use jumper if channel unused and detect NO_SIGNAL
+NoConn ~ 3800 2800
+NoConn ~ 3800 2900
+NoConn ~ 5000 2900
+Wire Wire Line
+	5000 3500 5400 3500
+$Comp
+L Connector_Generic:Conn_01x03 J2
+U 1 1 5BDFAB1F
+P 1920 3690
+F 0 "J2" V 1793 3870 50  0000 L CNN
+F 1 "brake_channel" V 2030 3350 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1920 3690 50  0001 C CNN
+F 3 "~" H 1920 3690 50  0001 C CNN
+	1    1920 3690
+	-1   0    0    1   
+$EndComp
+NoConn ~ 2130 2690
+$Comp
+L Connector_Generic:Conn_01x03 J1
+U 1 1 5BDFAE99
+P 1910 4670
+F 0 "J1" V 1783 4850 50  0000 L CNN
+F 1 "aux1_channel" V 2010 4430 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1910 4670 50  0001 C CNN
+F 3 "~" H 1910 4670 50  0001 C CNN
+	1    1910 4670
+	-1   0    0    1   
+$EndComp
+NoConn ~ 2110 4670
 $Comp
 L ArduProMiniTKB:ARDUPROMINI-6 uP1
 U 1 1 5BD3651D
-P 5790 2610
-F 0 "uP1" H 5190 1930 60  0000 C CNN
-F 1 "ARDUPROMINI" H 5190 2090 60  0000 C CNN
-F 2 "ArduProMiniTKB:ArduProMini" H 5790 2610 60  0001 C CNN
-F 3 "" H 5790 2610 60  0000 C CNN
-	1    5790 2610
+P 5000 1600
+F 0 "uP1" H 4390 -10 60  0000 C CNN
+F 1 "ARDUPROMINI" H 4410 630 60  0000 C CNN
+F 2 "ArduProMiniTKB:ArduProMini-6" H 5000 1600 60  0001 C CNN
+F 3 "" H 5000 1600 60  0000 C CNN
+	1    5000 1600
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	3140 3590 2610 3590
+Wire Wire Line
+	2610 2590 3340 2590
+NoConn ~ 3800 2700
 $Comp
-L power:GND #PWR0120
-U 1 1 5BD3CE7B
-P 3830 4630
-F 0 "#PWR0120" H 3830 4380 50  0001 C CNN
-F 1 "GND" H 3835 4457 50  0000 C CNN
-F 2 "" H 3830 4630 50  0001 C CNN
-F 3 "" H 3830 4630 50  0001 C CNN
-	1    3830 4630
+L Connector_Generic:Conn_01x03 J3
+U 1 1 5BDFF9DF
+P 1920 4190
+F 0 "J3" V 1793 4370 50  0000 L CNN
+F 1 "aux2_channel" V 2140 3940 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1920 4190 50  0001 C CNN
+F 3 "~" H 1920 4190 50  0001 C CNN
+	1    1920 4190
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR03
+U 1 1 5BDFF9E5
+P 2120 4290
+F 0 "#PWR03" H 2120 4040 50  0001 C CNN
+F 1 "GND" H 2125 4117 50  0000 C CNN
+F 2 "" H 2120 4290 50  0001 C CNN
+F 3 "" H 2120 4290 50  0001 C CNN
+	1    2120 4290
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	3120 4260 3470 4260
-Wire Wire Line
-	3800 4260 3800 4110
-Wire Wire Line
-	3800 4110 4590 4110
-Wire Wire Line
-	3830 4430 3950 4430
-Wire Wire Line
-	3950 4430 3950 4210
-Wire Wire Line
-	3950 4210 4180 4210
 $Comp
-L power:GND #PWR0121
-U 1 1 5BD3D5AE
-P 6070 3810
-F 0 "#PWR0121" H 6070 3560 50  0001 C CNN
-F 1 "GND" H 6075 3637 50  0000 C CNN
-F 2 "" H 6070 3810 50  0001 C CNN
-F 3 "" H 6070 3810 50  0001 C CNN
-	1    6070 3810
-	1    0    0    -1  
-$EndComp
-Connection ~ 6070 3810
-Text GLabel 6020 3710 1    50   Input ~ 0
-VLiPo
-Text GLabel 7080 4090 0    50   Input ~ 0
-VLiPo
-Text GLabel 7080 2580 0    50   Input ~ 0
-VLiPo
-Text GLabel 7080 1210 0    50   Input ~ 0
-VLiPo
-Text GLabel 7080 5450 0    50   Input ~ 0
-VLiPo
-Text GLabel 9090 6230 0    50   Input ~ 0
-VLiPo
-Text GLabel 9090 4770 0    50   Input ~ 0
-VLiPo
-Text GLabel 9090 3230 0    50   Input ~ 0
-VLiPo
-Text GLabel 9090 1850 0    50   Input ~ 0
-VLiPo
-$Comp
-L Device:R R27
-U 1 1 5BD3EA4C
-P 3470 4410
-F 0 "R27" H 3540 4456 50  0000 L CNN
-F 1 "R" H 3540 4365 50  0000 L CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" V 3400 4410 50  0001 C CNN
-F 3 "~" H 3470 4410 50  0001 C CNN
-	1    3470 4410
-	1    0    0    -1  
-$EndComp
-Connection ~ 3470 4260
-Wire Wire Line
-	3470 4260 3800 4260
-$Comp
-L power:GND #PWR0122
-U 1 1 5BD3EAEE
-P 3470 4560
-F 0 "#PWR0122" H 3470 4310 50  0001 C CNN
-F 1 "GND" H 3475 4387 50  0000 C CNN
-F 2 "" H 3470 4560 50  0001 C CNN
-F 3 "" H 3470 4560 50  0001 C CNN
-	1    3470 4560
+L Device:R R5
+U 1 1 5BDFF9EB
+P 2610 4240
+F 0 "R5" H 2680 4286 50  0000 L CNN
+F 1 "R" H 2680 4195 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 2540 4240 50  0001 C CNN
+F 3 "~" H 2610 4240 50  0001 C CNN
+	1    2610 4240
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:R R28
-U 1 1 5BD3EB32
-P 4180 4360
-F 0 "R28" H 4250 4406 50  0000 L CNN
-F 1 "R" H 4250 4315 50  0000 L CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" V 4110 4360 50  0001 C CNN
-F 3 "~" H 4180 4360 50  0001 C CNN
-	1    4180 4360
+L power:GND #PWR010
+U 1 1 5BDFF9F1
+P 2610 4390
+F 0 "#PWR010" H 2610 4140 50  0001 C CNN
+F 1 "GND" H 2615 4217 50  0000 C CNN
+F 2 "" H 2610 4390 50  0001 C CNN
+F 3 "" H 2610 4390 50  0001 C CNN
+	1    2610 4390
 	1    0    0    -1  
 $EndComp
-Connection ~ 4180 4210
+NoConn ~ 2120 4190
 Wire Wire Line
-	4180 4210 4590 4210
-$Comp
-L power:GND #PWR0123
-U 1 1 5BD3EBBD
-P 4180 4510
-F 0 "#PWR0123" H 4180 4260 50  0001 C CNN
-F 1 "GND" H 4185 4337 50  0000 C CNN
-F 2 "" H 4180 4510 50  0001 C CNN
-F 3 "" H 4180 4510 50  0001 C CNN
-	1    4180 4510
-	1    0    0    -1  
-$EndComp
+	6050 4570 6050 3100
 Wire Wire Line
-	5960 3430 5960 4110
+	5000 3100 6050 3100
 Wire Wire Line
-	5960 4110 5790 4110
-$Comp
-L Connector:Conn_01x01_Male J20
-U 1 1 5BD4063F
-P 4450 5600
-F 0 "J20" H 4556 5778 50  0000 C CNN
-F 1 "Conn_01x01_Male" H 4556 5687 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 4450 5600 50  0001 C CNN
-F 3 "~" H 4450 5600 50  0001 C CNN
-	1    4450 5600
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Conn_01x01_Male J21
-U 1 1 5BD407AB
-P 4450 5940
-F 0 "J21" H 4556 6118 50  0000 C CNN
-F 1 "Conn_01x01_Male" H 4556 6027 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical" H 4450 5940 50  0001 C CNN
-F 3 "~" H 4450 5940 50  0001 C CNN
-	1    4450 5940
-	1    0    0    -1  
-$EndComp
-Text GLabel 4650 5600 2    50   Input ~ 0
+	3340 2590 3340 3100
+Wire Wire Line
+	3340 3100 3800 3100
+Wire Wire Line
+	2610 3100 3140 3100
+Wire Wire Line
+	3140 3100 3140 3200
+Wire Wire Line
+	3140 3200 3800 3200
+Wire Wire Line
+	3140 3300 3140 3590
+Wire Wire Line
+	3140 3300 3800 3300
+Wire Wire Line
+	2600 4570 6050 4570
+Wire Wire Line
+	2600 4570 2110 4570
+Connection ~ 2600 4570
+Wire Wire Line
+	2120 4090 2610 4090
+Connection ~ 2610 4090
+Wire Wire Line
+	2610 3590 2120 3590
+Connection ~ 2610 3590
+Wire Wire Line
+	2130 3100 2610 3100
+Connection ~ 2610 3100
+Wire Wire Line
+	2610 2590 2130 2590
+Connection ~ 2610 2590
+Text GLabel 9560 5930 0    50   Input ~ 0
 VLiPo
-Text GLabel 4650 5940 2    50   Input ~ 0
+Text GLabel 9560 4470 0    50   Input ~ 0
 VLiPo
-Wire Wire Line
-	3730 4010 3260 4010
-Wire Wire Line
-	3900 3710 4500 3710
-Wire Wire Line
-	4500 3710 4500 4310
-Wire Wire Line
-	4500 4310 4590 4310
-Connection ~ 3900 3710
-Wire Notes Line
-	4590 3710 4500 3710
+Text GLabel 7550 5150 0    50   Input ~ 0
+VLiPo
+Text GLabel 7550 3790 0    50   Input ~ 0
+VLiPo
+Text GLabel 9560 1550 0    50   Input ~ 0
+VLiPo2
+Text GLabel 9560 2930 0    50   Input ~ 0
+VLiPo2
 $Comp
-L freetronics_schematic:POT VR1
-U 1 1 5BDB7813
-P 6490 4210
-F 0 "VR1" V 6536 4133 50  0000 R CNN
-F 1 "POT" V 6445 4133 50  0000 R CNN
-F 2 "Potentiometer_THT:Potentiometer_Piher_T-16H_Single_Horizontal" H 6490 4210 60  0001 C CNN
-F 3 "" H 6490 4210 60  0000 C CNN
-	1    6490 4210
-	0    -1   -1   0   
+L Device:R R6
+U 1 1 5BE12049
+P 6270 3600
+F 0 "R6" V 6063 3600 50  0000 C CNN
+F 1 "100" V 6154 3600 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 6200 3600 50  0001 C CNN
+F 3 "~" H 6270 3600 50  0001 C CNN
+	1    6270 3600
+	0    1    1    0   
 $EndComp
-Text GLabel 6490 3960 1    50   Input ~ 0
-VCC
+Wire Wire Line
+	5000 3600 6120 3600
 $Comp
-L power:GND #PWR01
-U 1 1 5BDB79D4
-P 6490 4460
-F 0 "#PWR01" H 6490 4210 50  0001 C CNN
-F 1 "GND" H 6495 4287 50  0000 C CNN
-F 2 "" H 6490 4460 50  0001 C CNN
-F 3 "" H 6490 4460 50  0001 C CNN
-	1    6490 4460
+L Connector:Conn_01x02_Male J11
+U 1 1 5BE12722
+P 6620 3700
+F 0 "J11" H 6592 3580 50  0000 R CNN
+F 1 "buzz" H 6592 3671 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 6620 3700 50  0001 C CNN
+F 3 "~" H 6620 3700 50  0001 C CNN
+	1    6620 3700
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR016
+U 1 1 5BE12906
+P 6420 3700
+F 0 "#PWR016" H 6420 3450 50  0001 C CNN
+F 1 "GND" H 6425 3527 50  0000 C CNN
+F 2 "" H 6420 3700 50  0001 C CNN
+F 3 "" H 6420 3700 50  0001 C CNN
+	1    6420 3700
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	6340 4210 5790 4210
-Text GLabel 6250 4210 3    50   Input ~ 0
-thresh_set
 $Comp
-L Connector_Generic:Conn_01x01 J22
-U 1 1 5BDB8277
-P 6700 4800
-F 0 "J22" H 6779 4842 50  0000 L CNN
-F 1 "DBG_PIN" H 6779 4751 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical" H 6700 4800 50  0001 C CNN
-F 3 "~" H 6700 4800 50  0001 C CNN
-	1    6700 4800
+L Connector:Conn_01x02_Male J7
+U 1 1 5BE13BB6
+P 3510 6000
+F 0 "J7" H 3482 5880 50  0000 R CNN
+F 1 "vlipo" H 3482 5971 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3510 6000 50  0001 C CNN
+F 3 "~" H 3510 6000 50  0001 C CNN
+	1    3510 6000
+	-1   0    0    1   
+$EndComp
+Text GLabel 3310 5900 0    50   Input ~ 0
+VLiPo
+$Comp
+L power:GND #PWR012
+U 1 1 5BE13D00
+P 3310 6000
+F 0 "#PWR012" H 3310 5750 50  0001 C CNN
+F 1 "GND" H 3315 5827 50  0000 C CNN
+F 2 "" H 3310 6000 50  0001 C CNN
+F 3 "" H 3310 6000 50  0001 C CNN
+	1    3310 6000
 	1    0    0    -1  
 $EndComp
+$Comp
+L Connector:Conn_01x02_Male J6
+U 1 1 5BE13D2F
+P 3510 5500
+F 0 "J6" H 3482 5380 50  0000 R CNN
+F 1 "vlipo2" H 3482 5471 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3510 5500 50  0001 C CNN
+F 3 "~" H 3510 5500 50  0001 C CNN
+	1    3510 5500
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR011
+U 1 1 5BE13DDB
+P 3310 5500
+F 0 "#PWR011" H 3310 5250 50  0001 C CNN
+F 1 "GND" H 3315 5327 50  0000 C CNN
+F 2 "" H 3310 5500 50  0001 C CNN
+F 3 "" H 3310 5500 50  0001 C CNN
+	1    3310 5500
+	1    0    0    -1  
+$EndComp
+Text GLabel 3310 5400 0    50   Input ~ 0
+VLiPo2
 Wire Wire Line
-	6500 4800 6170 4800
+	5420 4090 5420 3200
 Wire Wire Line
-	6170 4800 6170 4510
+	5420 3200 5000 3200
 Wire Wire Line
-	6170 4510 5790 4510
+	2610 4090 5420 4090
+Wire Wire Line
+	3800 3600 3300 3600
+Wire Wire Line
+	3300 3600 3300 4900
+$Comp
+L Connector:Conn_01x02_Male J8
+U 1 1 5BE19840
+P 3500 5000
+F 0 "J8" H 3472 4880 50  0000 R CNN
+F 1 "dbg2" H 3472 4971 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3500 5000 50  0001 C CNN
+F 3 "~" H 3500 5000 50  0001 C CNN
+	1    3500 5000
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR0101
+U 1 1 5BE19926
+P 3300 5000
+F 0 "#PWR0101" H 3300 4750 50  0001 C CNN
+F 1 "GND" H 3305 4827 50  0000 C CNN
+F 2 "" H 3300 5000 50  0001 C CNN
+F 3 "" H 3300 5000 50  0001 C CNN
+	1    3300 5000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

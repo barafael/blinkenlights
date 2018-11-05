@@ -36,23 +36,6 @@ X RESET 9 -1200 -1300 300 R 50 50 1 1 I
 ENDDRAW
 ENDDEF
 #
-# Connector_Conn_01x01_Male
-#
-DEF Connector_Conn_01x01_Male J 0 40 Y N 1 F N
-F0 "J" 0 100 50 H V C CNN
-F1 "Connector_Conn_01x01_Male" 0 -100 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-$FPLIST
- Connector*:*
-$ENDFPLIST
-DRAW
-S 34 5 0 -5 1 1 6 F
-P 2 1 1 6 50 0 34 0 N
-X Pin_1 1 200 0 150 L 50 50 1 1 P
-ENDDRAW
-ENDDEF
-#
 # Connector_Conn_01x02_Female
 #
 DEF Connector_Conn_01x02_Female J 0 40 Y N 1 F N
@@ -216,41 +199,6 @@ P 5 0 1 8 210 -20 150 -20 180 30 210 -20 210 -20 N
 X D D 100 200 100 D 40 40 1 1 P
 X G G -200 0 150 R 40 40 1 1 I
 X S S 100 -200 100 U 40 40 1 1 P
-ENDDRAW
-ENDDEF
-#
-# freetronics_schematic_POT
-#
-DEF freetronics_schematic_POT VR 0 40 Y N 1 F N
-F0 "VR" 0 -100 50 H V C CNN
-F1 "freetronics_schematic_POT" 0 0 50 H V C CNN
-F2 "" 0 0 60 H V C CNN
-F3 "" 0 0 60 H V C CNN
-$FPLIST
- POT_*
-$ENDFPLIST
-DRAW
-S -150 50 150 -50 0 1 0 N
-P 3 0 1 0 0 50 -20 70 20 70 F
-X 1 1 -250 0 100 R 40 40 1 1 P
-X 2 2 250 0 100 L 40 40 1 1 P
-X W W 0 150 80 D 40 40 1 1 P
-ENDDRAW
-ENDDEF
-#
-# freetronics_schematic_SW_SPST
-#
-DEF freetronics_schematic_SW_SPST SW 0 0 Y N 1 F N
-F0 "SW" -100 100 70 H V C CNN
-F1 "freetronics_schematic_SW_SPST" 0 -100 70 H V C CNN
-F2 "" 0 0 60 H V C CNN
-F3 "" 0 0 60 H V C CNN
-DRAW
-C -150 0 50 0 0 0 N
-C 150 0 50 0 0 0 N
-P 2 0 0 0 -100 0 100 100 N
-X 1 1 -500 0 300 R 70 70 1 1 I
-X 2 2 500 0 300 L 70 70 1 1 I
 ENDDRAW
 ENDDEF
 #
