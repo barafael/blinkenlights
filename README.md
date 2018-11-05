@@ -5,11 +5,13 @@
 * Support for 2 different modes (FLYING, STANDBY). Different patterns for each. Switching modes by RC PWM channel.
 
 Render of PCB:
-![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz_pcb_rendered.png)
+![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz_pcb2_rendered.png)
 
 Schematic:
 ![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz-page1.png)
 
-MOSFET driver:
-![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz-page2.png)
+PCB in pcbnew:
+![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz_pcb2.png)
 
+MOSFET driver schematic:
+![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz-page2.png)
