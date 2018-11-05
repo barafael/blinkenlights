@@ -43,10 +43,10 @@ static const uint64_t COUNTER_MAX = 1000;
 static const uint64_t MILLISECONDS_PER_CYCLE = 3000;
 static const uint64_t MILLISECONDS_PER_STEP  = MILLISECONDS_PER_CYCLE / COUNTER_MAX;
 
-typedef enum { FLYING, STANDBY } flying_state_t;
+typedef enum { FLYING, STANDBY } mode_t;
 
 typedef struct {
-    flying_state_t fly_state;
+    mode_t mode;
     /* Flag indicates if landing light should be on */
     bool landing_light_active;
     bool brake_active;
@@ -151,13 +151,13 @@ void loop() {
     /* Set mode to standby only if mode is enabled */
     if (standby_mode_enabled) {
         if (standby_channel_pulse_time < STANDBY_MODE_THRESHOLD) {
-            current_state.fly_state = STANDBY;
+            current_state.mode = STANDBY;
         } else {
-            current_state.fly_state = FLYING;
+            current_state.mode = FLYING;
         }
     } else {
         /* If mode not enabled, state is FLYING */
-        current_state.fly_state = FLYING;
+        current_state.mode = FLYING;
     }
 
     if (landing_light_enabled) {
@@ -246,7 +246,7 @@ Serial.println((long)standby_channel_pulse_time);
     (int)(((double)(a)/(double)(b)) * COUNTER_MAX)
 
 static void update_test_pin(uint64_t tick, state_t *state) {
-    switch(state->fly_state) {
+    switch(state->mode) {
     case FLYING:
         switch(tick) {
         case 0:
@@ -297,7 +297,7 @@ static void updateOutput_D5(uint64_t tick, state_t *state) {
 }
 
 static void updateOutput_D6(uint64_t tick, state_t *state) {
-    if (state->fly_state == FLYING) {
+    if (state->mode == FLYING) {
         switch (tick) {
             case 0:
                 D6_PIN.high();
@@ -342,7 +342,7 @@ static void updateOutput_D6(uint64_t tick, state_t *state) {
                 D6_PIN.low();
                 break;
         }
-    } else if (state->fly_state == STANDBY) {
+    } else if (state->mode == STANDBY) {
         if (tick < 500) {
             D6_PIN.high();
         } else {
