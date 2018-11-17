@@ -83,7 +83,7 @@ L Connector_Generic:Conn_01x03 J4
 U 1 1 5BCF5A90
 P 1930 2690
 F 0 "J4" V 1803 2870 50  0000 L CNN
-F 1 "standby_mode_channel" V 2050 2290 50  0000 L CNN
+F 1 "standby" V 2030 2540 50  0000 L CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1930 2690 50  0001 C CNN
 F 3 "~" H 1930 2690 50  0001 C CNN
 	1    1930 2690
@@ -94,7 +94,7 @@ L Connector_Generic:Conn_01x03 J5
 U 1 1 5BCF5B4E
 P 1930 3200
 F 0 "J5" V 1803 3380 50  0000 L CNN
-F 1 "landing_mode_channel" V 2160 2850 50  0000 L CNN
+F 1 "landing" V 2030 3060 50  0000 L CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1930 3200 50  0001 C CNN
 F 3 "~" H 1930 3200 50  0001 C CNN
 	1    1930 3200
@@ -236,12 +236,12 @@ $EndComp
 $Comp
 L Connector_Generic:Conn_01x01 J10
 U 1 1 5BDB8277
-P 5600 3500
-F 0 "J10" H 5679 3542 50  0000 L CNN
-F 1 "DBG_PIN" H 5679 3451 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical" H 5600 3500 50  0001 C CNN
-F 3 "~" H 5600 3500 50  0001 C CNN
-	1    5600 3500
+P 5730 3500
+F 0 "J10" V 5830 3430 50  0000 L CNN
+F 1 "DBG_PIN" H 5570 3600 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical" H 5730 3500 50  0001 C CNN
+F 3 "~" H 5730 3500 50  0001 C CNN
+	1    5730 3500
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -329,13 +329,13 @@ NoConn ~ 3800 2800
 NoConn ~ 3800 2900
 NoConn ~ 5000 2900
 Wire Wire Line
-	5000 3500 5400 3500
+	5000 3500 5530 3500
 $Comp
 L Connector_Generic:Conn_01x03 J2
 U 1 1 5BDFAB1F
 P 1920 3690
 F 0 "J2" V 1793 3870 50  0000 L CNN
-F 1 "brake_channel" V 2030 3350 50  0000 L CNN
+F 1 "brake" V 2010 3580 50  0000 L CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1920 3690 50  0001 C CNN
 F 3 "~" H 1920 3690 50  0001 C CNN
 	1    1920 3690
@@ -347,7 +347,7 @@ L Connector_Generic:Conn_01x03 J1
 U 1 1 5BDFAE99
 P 1910 4670
 F 0 "J1" V 1783 4850 50  0000 L CNN
-F 1 "aux1_channel" V 2010 4430 50  0000 L CNN
+F 1 "aux1" V 2000 4580 50  0000 L CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1910 4670 50  0001 C CNN
 F 3 "~" H 1910 4670 50  0001 C CNN
 	1    1910 4670
@@ -375,7 +375,7 @@ L Connector_Generic:Conn_01x03 J3
 U 1 1 5BDFF9DF
 P 1920 4190
 F 0 "J3" V 1793 4370 50  0000 L CNN
-F 1 "aux2_channel" V 2140 3940 50  0000 L CNN
+F 1 "aux2" V 2010 4090 50  0000 L CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 1920 4190 50  0001 C CNN
 F 3 "~" H 1920 4190 50  0001 C CNN
 	1    1920 4190
@@ -416,9 +416,9 @@ F 3 "" H 2610 4390 50  0001 C CNN
 $EndComp
 NoConn ~ 2120 4190
 Wire Wire Line
-	6050 4570 6050 3100
+	6100 4570 6100 3100
 Wire Wire Line
-	5000 3100 6050 3100
+	5000 3100 6100 3100
 Wire Wire Line
 	3340 2590 3340 3100
 Wire Wire Line
@@ -434,7 +434,7 @@ Wire Wire Line
 Wire Wire Line
 	3140 3300 3800 3300
 Wire Wire Line
-	2600 4570 6050 4570
+	2600 4570 6100 4570
 Wire Wire Line
 	2600 4570 2110 4570
 Connection ~ 2600 4570
@@ -465,36 +465,36 @@ VLiPo2
 $Comp
 L Device:R R6
 U 1 1 5BE12049
-P 6270 3600
-F 0 "R6" V 6063 3600 50  0000 C CNN
-F 1 "100" V 6154 3600 50  0000 C CNN
-F 2 "Resistor_SMD:R_0805_2012Metric" V 6200 3600 50  0001 C CNN
-F 3 "~" H 6270 3600 50  0001 C CNN
-	1    6270 3600
+P 6370 3600
+F 0 "R6" V 6163 3600 50  0000 C CNN
+F 1 "100" V 6254 3600 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric" V 6300 3600 50  0001 C CNN
+F 3 "~" H 6370 3600 50  0001 C CNN
+	1    6370 3600
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	5000 3600 6120 3600
+	5000 3600 6220 3600
 $Comp
 L Connector:Conn_01x02_Male J11
 U 1 1 5BE12722
-P 6620 3700
-F 0 "J11" H 6592 3580 50  0000 R CNN
-F 1 "buzz" H 6592 3671 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 6620 3700 50  0001 C CNN
-F 3 "~" H 6620 3700 50  0001 C CNN
-	1    6620 3700
+P 6720 3700
+F 0 "J11" H 6692 3580 50  0000 R CNN
+F 1 "buzz" H 6692 3671 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 6720 3700 50  0001 C CNN
+F 3 "~" H 6720 3700 50  0001 C CNN
+	1    6720 3700
 	-1   0    0    1   
 $EndComp
 $Comp
 L power:GND #PWR016
 U 1 1 5BE12906
-P 6420 3700
-F 0 "#PWR016" H 6420 3450 50  0001 C CNN
-F 1 "GND" H 6425 3527 50  0000 C CNN
-F 2 "" H 6420 3700 50  0001 C CNN
-F 3 "" H 6420 3700 50  0001 C CNN
-	1    6420 3700
+P 6520 3700
+F 0 "#PWR016" H 6520 3450 50  0001 C CNN
+F 1 "GND" H 6525 3527 50  0000 C CNN
+F 2 "" H 6520 3700 50  0001 C CNN
+F 3 "" H 6520 3700 50  0001 C CNN
+	1    6520 3700
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -546,11 +546,11 @@ $EndComp
 Text GLabel 3310 5400 0    50   Input ~ 0
 VLiPo2
 Wire Wire Line
-	5420 4090 5420 3200
+	5460 4090 5460 3200
 Wire Wire Line
-	5420 3200 5000 3200
+	5460 3200 5000 3200
 Wire Wire Line
-	2610 4090 5420 4090
+	2610 4090 5460 4090
 Wire Wire Line
 	3800 3600 3300 3600
 Wire Wire Line
@@ -577,4 +577,19 @@ F 3 "" H 3300 5000 50  0001 C CNN
 	1    3300 5000
 	1    0    0    -1  
 $EndComp
+$Comp
+L Device:R R32
+U 1 1 5BF07645
+P 4270 5900
+F 0 "R32" V 4063 5900 50  0000 C CNN
+F 1 "R" V 4154 5900 50  0000 C CNN
+F 2 "Jumper:SolderJumper-2_P1.3mm_Open_Pad1.0x1.5mm" V 4200 5900 50  0001 C CNN
+F 3 "~" H 4270 5900 50  0001 C CNN
+	1    4270 5900
+	0    1    1    0   
+$EndComp
+Text GLabel 4120 5900 0    50   Input ~ 0
+VLiPo2
+Text GLabel 4420 5900 2    50   Input ~ 0
+VLiPo
 $EndSCHEMATC
