@@ -32,7 +32,7 @@ static const int AUX2_CHANNEL_PIN          = A2;
    (compared against RC PWM value on resp. pin) */
 static const uint64_t STANDBY_MODE_THRESHOLD  = 1500;
 static const uint64_t LANDING_LIGHT_THRESHOLD = 1500;
-static const uint64_t BRAKES_THRESHOLD        = 1500;
+static const uint64_t BRAKE_THRESHOLD         = 1500;
 
 /* Counter for main loop,
    subdivides each cycle into MILLISECONDS_PER_CYCLE steps */
@@ -58,10 +58,11 @@ typedef struct {
 static state_t current_state = { STANDBY, false, false };
 
 /* Time in microseconds after which an RC PWM signal is considered stale */
-#define PWM_STALE_TIMEOUT_MICROS 20000
+#define PWM_CYCLE_TIMEOUT_MICROS 20000
+#define PWM_PULSE_TIMEOUT_MICROS 5000
 
-// Flag invalid RC PWM pulse signal
-#define NO_SIGNAL (0)
+/* Flag invalid RC PWM pulse signal */
+static const int  NO_SIGNAL = 0;
 
 /* Variables to measure pulse duration of RC PWM pulse
    volatile because shared with interrupts */
@@ -87,15 +88,21 @@ static uint64_t brake_channel_pulse_time   = NO_SIGNAL;
 static uint64_t aux1_channel_pulse_time    = NO_SIGNAL;
 static uint64_t aux2_channel_pulse_time    = NO_SIGNAL;
 
+static uint64_t standby_channel_rise;
+static uint64_t landing_channel_rise;
+static uint64_t brake_channel_rise;
+static uint64_t aux1_channel_rise;
+static uint64_t aux2_channel_rise;
+
 void setup() {
     Serial.begin(250000);
 
     TEST_PIN.mode(OUTPUT);
 
-    D5_PIN.mode (OUTPUT);
-    D6_PIN.mode (OUTPUT);
-    D8_PIN.mode (OUTPUT);
-    D9_PIN.mode (OUTPUT);
+    D5_PIN.mode(OUTPUT);
+    D6_PIN.mode(OUTPUT);
+    D8_PIN.mode(OUTPUT);
+    D9_PIN.mode(OUTPUT);
     D10_PIN.mode(OUTPUT);
     D11_PIN.mode(OUTPUT);
     D14_PIN.mode(OUTPUT);
@@ -142,16 +149,64 @@ void setup() {
 
 void loop() {
     uint64_t loop_start_millis = millis();
-    /* Copy over shared volatile variables */
-    noInterrupts();
-    standby_channel_pulse_time = standby_channel_pulse_time_shared;
-    landing_channel_pulse_time = landing_channel_pulse_time_shared;
-    brake_channel_pulse_time   = brake_channel_pulse_time_shared;
-    aux1_channel_pulse_time    = aux1_channel_pulse_time_shared;
-    aux2_channel_pulse_time    = aux2_channel_pulse_time_shared;
-    interrupts();
 
-    /* Read if jumpers present (active low) */
+    /* Handle RC PWM input */
+    {
+        /* Copy over shared volatile variables */
+        noInterrupts();
+        standby_channel_pulse_time = standby_channel_pulse_time_shared;
+        landing_channel_pulse_time = landing_channel_pulse_time_shared;
+        brake_channel_pulse_time   = brake_channel_pulse_time_shared;
+        aux1_channel_pulse_time    = aux1_channel_pulse_time_shared;
+        aux2_channel_pulse_time    = aux2_channel_pulse_time_shared;
+
+        standby_channel_rise = standby_channel_rise_shared;
+        landing_channel_rise = landing_channel_rise_shared;
+        brake_channel_rise   = brake_channel_rise_shared;
+        aux1_channel_rise    = aux1_channel_rise_shared;
+        aux2_channel_rise    = aux2_channel_rise_shared;
+        interrupts();
+
+        /* Check for stale pulse time readings */
+        const uint64_t now = micros();
+        if ((now - standby_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
+                standby_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
+            // ignoring interrupt here, assumption is that it won't been triggered
+            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
+            standby_channel_pulse_time        = NO_SIGNAL;
+            standby_channel_pulse_time_shared = NO_SIGNAL;
+        }
+        if ((now - landing_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
+                landing_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
+            // ignoring interrupt here, assumption is that it won't been triggered
+            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
+            landing_channel_pulse_time        = NO_SIGNAL;
+            landing_channel_pulse_time_shared = NO_SIGNAL;
+        }
+        if ((now - brake_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
+                brake_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
+            // ignoring interrupt here, assumption is that it won't been triggered
+            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
+            brake_channel_pulse_time        = NO_SIGNAL;
+            brake_channel_pulse_time_shared = NO_SIGNAL;
+        }
+        if ((now - aux1_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
+                aux1_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
+            // ignoring interrupt here, assumption is that it won't been triggered
+            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
+            aux1_channel_pulse_time        = NO_SIGNAL;
+            aux1_channel_pulse_time_shared = NO_SIGNAL;
+        }
+        if ((now - aux2_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
+                aux2_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
+            // ignoring interrupt here, assumption is that it won't been triggered
+            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
+            aux2_channel_pulse_time        = NO_SIGNAL;
+            aux2_channel_pulse_time_shared = NO_SIGNAL;
+        }
+    }
+
+    /* Read if signal present */
     bool standby_mode_enabled  = standby_channel_pulse_time != NO_SIGNAL;
     bool landing_light_enabled = landing_channel_pulse_time != NO_SIGNAL;
 
@@ -173,12 +228,13 @@ void loop() {
         current_state.landing_light_active = false;
     }
 
-    if (brake_channel_pulse_time > 1500) {
+    if (brake_channel_pulse_time > BRAKE_THRESHOLD) {
         current_state.brake_active = true;
     } else {
         current_state.brake_active = false;
     }
 
+    /* Update outputs with current state */
     update_test_pin(counter, &current_state);
 
     updateOutput_D5(counter,  &current_state);
@@ -190,55 +246,6 @@ void loop() {
     updateOutput_D14(counter, &current_state);
     updateOutput_D15(counter, &current_state);
 
-    /* Check for stale pulse time readings
-       (in separate scope so that variables are only used here) */
-    {
-        const uint64_t now = micros();
-        /* temporary variable copies */
-        noInterrupts();
-        static const uint64_t standby_channel_rise = standby_channel_rise_shared;
-        static const uint64_t landing_channel_rise = landing_channel_rise_shared;
-        static const uint64_t brake_channel_rise   = brake_channel_rise_shared;
-        static const uint64_t aux1_channel_rise    = aux1_channel_rise_shared;
-        static const uint64_t aux2_channel_rise    = aux2_channel_rise_shared;
-        interrupts();
-
-        if ((now - standby_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
-                standby_channel_pulse_time > 2500) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
-            standby_channel_pulse_time        = NO_SIGNAL;
-            standby_channel_pulse_time_shared = NO_SIGNAL;
-        }
-        if ((now - landing_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
-                landing_channel_pulse_time > 2500) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
-            landing_channel_pulse_time        = NO_SIGNAL;
-            landing_channel_pulse_time_shared = NO_SIGNAL;
-        }
-        if ((now - brake_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
-                brake_channel_pulse_time > 2500) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
-            brake_channel_pulse_time        = NO_SIGNAL;
-            brake_channel_pulse_time_shared = NO_SIGNAL;
-        }
-        if ((now - aux1_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
-                aux1_channel_pulse_time > 2500) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
-            aux1_channel_pulse_time        = NO_SIGNAL;
-            aux1_channel_pulse_time_shared = NO_SIGNAL;
-        }
-        if ((now - aux2_channel_rise) > PWM_STALE_TIMEOUT_MICROS ||
-                aux2_channel_pulse_time > 2500) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_STALE_TIMEOUT_MICROS microseconds
-            aux2_channel_pulse_time        = NO_SIGNAL;
-            aux2_channel_pulse_time_shared = NO_SIGNAL;
-        }
-    }
     /* Advance counter */
     if (counter < COUNTER_MAX) {
         counter++;
@@ -246,8 +253,7 @@ void loop() {
         counter = 0;
     }
 
-//#define DEBUG_PRINT
-//#define DEBUG_GRAPH
+#define DEBUG_PRINT
 #ifdef DEBUG_PRINT
     Serial.print("Counter: ");
     Serial.print((long) counter);
@@ -267,12 +273,6 @@ void loop() {
     Serial.print("AUX2 channel: ");
     Serial.print((long) aux2_channel_pulse_time);
     Serial.println("");
-#else
-#ifdef DEBUG_GRAPH
-    Serial.print((long) brake_channel_pulse_time);
-    Serial.print("\t");
-    Serial.println((long) standby_channel_pulse_time);
-#endif
 #endif
 
     /* Block until MILLISECONDS_PER_STEP have passed */
