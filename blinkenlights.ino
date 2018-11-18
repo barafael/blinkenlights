@@ -17,7 +17,8 @@ static DigitalPin<14> D14_PIN;
 static DigitalPin<15> D15_PIN;
 
 static const int BUZZER_PIN = 12;
-static const int DBG2_PIN   = 7;
+
+static DigitalPin<7> DBG_PIN;
 
 /* To enter standby mode, activate landing lights, or enable brakes etc.
    apply an RC PWM signal to these pins */
@@ -62,7 +63,7 @@ static state_t current_state = { STANDBY, false, false };
 #define PWM_PULSE_TIMEOUT_MICROS 5000
 
 /* Flag invalid RC PWM pulse signal */
-static const int  NO_SIGNAL = 0;
+static const uint8_t NO_SIGNAL = 0;
 
 /* Variables to measure pulse duration of RC PWM pulse
    volatile because shared with interrupts */
