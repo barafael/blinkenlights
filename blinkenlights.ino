@@ -137,14 +137,35 @@ void setup() {
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX2_CHANNEL_PIN),  aux2_channel_interrupt,  CHANGE);
 
     /* Startup buzz */
-    tone(BUZZER_PIN, 880);
+    tone(BUZZER_PIN, 1245);
+    delay(100);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 1319);
+    delay(100);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 1568);
+    delay(100);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 1976);
+    delay(100);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 2349);
     delay(200);
     noTone(BUZZER_PIN);
-    tone(BUZZER_PIN, 1320);
-    delay(80);
+    tone(BUZZER_PIN, 2093);
+    delay(100);
     noTone(BUZZER_PIN);
-    tone(BUZZER_PIN, 880);
-    delay(80);
+    tone(BUZZER_PIN, 1568);
+    delay(200);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 1319);
+    delay(100);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 2349);
+    delay(200);
+    noTone(BUZZER_PIN);
+    tone(BUZZER_PIN, 2093);
+    delay(400);
     noTone(BUZZER_PIN);
 }
 
@@ -273,7 +294,7 @@ void loop() {
     Serial.print("\t");
     Serial.print("AUX2 channel: ");
     Serial.print((long) aux2_channel_pulse_time);
-    Serial.println("");
+    Serial.println();
 #endif
 
     /* Block until MILLISECONDS_PER_STEP have passed */
@@ -285,6 +306,7 @@ void loop() {
  * number of steps per cycle. */
 #define cycle_fraction(a, b) (int) (((double) (a) / (double) (b)) * COUNTER_MAX)
 
+/* Update outputs */
 static void update_test_pin(uint64_t tick, state_t *state) {
     switch (state->mode) {
         case FLYING:
@@ -397,6 +419,7 @@ static void updateOutput_D15(uint64_t tick, state_t *state) {
     }
 }
 
+/* RC PWM input handling functions */
 static void standby_channel_interrupt() {
     if (digitalRead(STANDBY_MODE_CHANNEL_PIN) == HIGH) {
         standby_channel_rise_shared = micros();
