@@ -44,7 +44,7 @@ static const uint64_t COUNTER_MAX = 1000;
 
 /* loop wait time MILLISECONDS_PER_STEP is such that one entire counter cycle
    takes MILLISECONDS_PER_CYCLE milliseconds */
-static const uint64_t MILLISECONDS_PER_CYCLE = 3000;
+static const uint64_t MILLISECONDS_PER_CYCLE = 1200;
 static const uint64_t MILLISECONDS_PER_STEP  = MILLISECONDS_PER_CYCLE / COUNTER_MAX;
 
 typedef enum { FLYING, STANDBY } mode_t;
@@ -136,7 +136,42 @@ void setup() {
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX1_CHANNEL_PIN),  aux1_channel_interrupt,  CHANGE);
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX2_CHANNEL_PIN),  aux2_channel_interrupt,  CHANGE);
 
-    /* Startup buzz */
+    startup_blink();
+    startup_buzz();
+}
+
+void startup_blink() {
+    TEST_PIN.high();
+    delay(50);
+    D5_PIN.high();
+    delay(50);
+    D6_PIN.high();
+    delay(50);
+    D8_PIN.high();
+    delay(50);
+    D9_PIN.high();
+    delay(50);
+    D10_PIN.high();
+    delay(50);
+    D11_PIN.high();
+    delay(50);
+    D14_PIN.high();
+    delay(50);
+    D15_PIN.high();
+    delay(50);
+
+    TEST_PIN.low();
+    D5_PIN.low();
+    D6_PIN.low();
+    D8_PIN.low();
+    D9_PIN.low();
+    D10_PIN.low();
+    D11_PIN.low();
+    D14_PIN.low();
+    D15_PIN.low();
+}
+
+void startup_buzz() {
     tone(BUZZER_PIN, 1245);
     delay(100);
     noTone(BUZZER_PIN);
@@ -341,20 +376,18 @@ static void updateOutput_D5(uint64_t tick, state_t *state) {
 static void updateOutput_D6(uint64_t tick, state_t *state) {
     if (state->mode == FLYING) {
         switch (tick) {
-            case 0: D6_PIN.high(); break;
-            case cycle_fraction(1, 70):   D6_PIN.low();  break;
-            case cycle_fraction(2, 70):   D6_PIN.high(); break;
-            case cycle_fraction(3, 70):   D6_PIN.low();  break;
-            case cycle_fraction(4, 70):   D6_PIN.high(); break;
-            case cycle_fraction(5, 70):   D6_PIN.low();  break;
-            case cycle_fraction(6, 70):   D6_PIN.high(); break;
-            case cycle_fraction(7, 70):   D6_PIN.low();  break;
-            case cycle_fraction(8, 70):   D6_PIN.high(); break;
-            case cycle_fraction(9, 70):   D6_PIN.low();  break;
-            case cycle_fraction(10, 70):  D6_PIN.high(); break;
-            case cycle_fraction(11, 70):  D6_PIN.low();  break;
-            case cycle_fraction(5, 10):   D6_PIN.high(); break;
-            case cycle_fraction(7.5, 10): D6_PIN.low();  break;
+            case 0:       D6_PIN.high(); break;
+            case cycle_fraction(1, 40):   D6_PIN.low();  break;
+            case cycle_fraction(4, 40):   D6_PIN.high();  break;
+            case cycle_fraction(5, 40):   D6_PIN.low();  break;
+            case cycle_fraction(6, 40):   D6_PIN.high();  break;
+            case cycle_fraction(7, 40):   D6_PIN.low();  break;
+            case cycle_fraction(8, 40):   D6_PIN.high();  break;
+            case cycle_fraction(9, 40):   D6_PIN.low();  break;
+            case cycle_fraction(10, 40):   D6_PIN.high();  break;
+            case cycle_fraction(11, 40):   D6_PIN.low();  break;
+
+
         }
     } else if (state->mode == STANDBY) {
         if (tick < 500) {
@@ -385,10 +418,11 @@ static void updateOutput_D9(uint64_t tick, state_t *state) {
 
 static void updateOutput_D10(uint64_t tick, state_t *state) {
     switch (tick) {
-        case 0: D10_PIN.high(); break;
-        case cycle_fraction(3, 10): D10_PIN.low();  break;
-        case cycle_fraction(6, 10): D10_PIN.high(); break;
-        case cycle_fraction(9, 10): D10_PIN.low();  break;
+        case 0: D10_PIN.low(); break;
+        case cycle_fraction(5, 10): D10_PIN.high();  break;
+        case cycle_fraction(11, 20): D10_PIN.low(); break;
+        case cycle_fraction(12, 20): D10_PIN.high();  break;
+        case cycle_fraction(13, 20): D10_PIN.low(); break;
     }
 }
 

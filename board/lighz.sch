@@ -323,8 +323,6 @@ F 3 "" H 2610 2890 50  0001 C CNN
 	1    2610 2890
 	1    0    0    -1  
 $EndComp
-Text Notes 1200 2180 0    50   ~ 0
-pull downs on PWM sig experimental - see what pulldown value RC PWM is ok with\notherwise, use jumper if channel unused and detect NO_SIGNAL
 NoConn ~ 3800 2800
 NoConn ~ 3800 2900
 NoConn ~ 5000 2900
@@ -359,7 +357,7 @@ L ArduProMiniTKB:ARDUPROMINI-6 uP1
 U 1 1 5BD3651D
 P 5000 1600
 F 0 "uP1" H 4390 -10 60  0000 C CNN
-F 1 "ARDUPROMINI" H 4410 630 60  0000 C CNN
+F 1 "ARDUINO PRO MINI" H 4410 630 60  0000 C CNN
 F 2 "ArduProMiniTKB:ArduProMini-6" H 5000 1600 60  0001 C CNN
 F 3 "" H 5000 1600 60  0000 C CNN
 	1    5000 1600
