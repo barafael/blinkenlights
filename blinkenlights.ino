@@ -366,10 +366,11 @@ static void update_test_pin(uint64_t tick, state_t *state) {
 }
 
 static void updateOutput_D5(uint64_t tick, state_t *state) {
-    if (state->landing_light_active) {
-        D5_PIN.high();
-    } else {
-        D5_PIN.low();
+    if (state->mode == FLYING) {
+        switch (tick) {
+            case 0:       D5_PIN.high(); break;
+            case cycle_fraction(1, 2):   D5_PIN.low();  break;
+        }
     }
 }
 
@@ -386,33 +387,28 @@ static void updateOutput_D6(uint64_t tick, state_t *state) {
             case cycle_fraction(9, 40):   D6_PIN.low();  break;
             case cycle_fraction(10, 40):   D6_PIN.high();  break;
             case cycle_fraction(11, 40):   D6_PIN.low();  break;
-
-
         }
     } else if (state->mode == STANDBY) {
-        if (tick < 500) {
-            D6_PIN.high();
-        } else {
-            D6_PIN.low();
+        switch (tick) {
+            case 0:       D6_PIN.high(); break;
+            case cycle_fraction(1, 2):   D6_PIN.low();  break;
         }
     }
 }
 
 static void updateOutput_D8(uint64_t tick, state_t *state) {
-    switch (tick) {
-        case 0: D8_PIN.high(); break;
-        case cycle_fraction(3, 10): D8_PIN.low();  break;
-        case cycle_fraction(6, 10): D8_PIN.high(); break;
-        case cycle_fraction(9, 10): D8_PIN.low();  break;
+    if (state->landing_light_active) {
+        D8_PIN.high();
+    } else {
+        D8_PIN.low();
     }
 }
 
 static void updateOutput_D9(uint64_t tick, state_t *state) {
-    switch (tick) {
-        case 0: D9_PIN.low(); break;
-        case cycle_fraction(3, 10): D9_PIN.high(); break;
-        case cycle_fraction(6, 10): D9_PIN.low();  break;
-        case cycle_fraction(9, 10): D9_PIN.high(); break;
+    if (state->landing_light_active) {
+        D9_PIN.high();
+    } else {
+        D9_PIN.low();
     }
 }
 
@@ -427,29 +423,34 @@ static void updateOutput_D10(uint64_t tick, state_t *state) {
 }
 
 static void updateOutput_D11(uint64_t tick, state_t *state) {
-    switch (tick) {
-        case 0: D11_PIN.low(); break;
-        case cycle_fraction(3, 10): D11_PIN.high(); break;
-        case cycle_fraction(6, 10): D11_PIN.low();  break;
-        case cycle_fraction(9, 10): D11_PIN.high(); break;
+    if (state->landing_light_active) {
+        D11_PIN.high();
+    } else {
+        D11_PIN.low();
     }
 }
 
 static void updateOutput_D14(uint64_t tick, state_t *state) {
-    switch (tick) {
-        case 0: D14_PIN.high(); break;
-        case cycle_fraction(3, 10): D14_PIN.low();  break;
-        case cycle_fraction(6, 10): D14_PIN.high(); break;
-        case cycle_fraction(9, 10): D14_PIN.low();  break;
+    if (state->mode == FLYING) {
+        switch (tick) {
+            case 0:                    D14_PIN.low();  break;
+            case cycle_fraction(1, 2): D14_PIN.high(); break;
+        }
     }
 }
 
 static void updateOutput_D15(uint64_t tick, state_t *state) {
-    switch (tick) {
-        case 0: D15_PIN.low(); break;
-        case cycle_fraction(3, 10): D15_PIN.high(); break;
-        case cycle_fraction(6, 10): D15_PIN.low();  break;
-        case cycle_fraction(9, 10): D15_PIN.high(); break;
+    if (state->mode == FLYING) {
+        switch (tick) {
+            case 0: D15_PIN.high(); break;
+            case cycle_fraction(1, 4): D15_PIN.high(); break;
+            case cycle_fraction(1, 2): D15_PIN.high(); break;
+            case cycle_fraction(3, 4): D15_PIN.high(); break;
+        }
+    } else if (state->mode == STANDBY) {
+        switch (tick) {
+            case 0: D15_PIN.low(); break;
+        }
     }
 }
 
