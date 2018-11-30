@@ -1,3 +1,6 @@
+#include <Wire.h>
+#include <SparkFunMLX90614.h>
+
 #include <PinChangeInterrupt.h>
 #include <PinChangeInterruptBoards.h>
 #include <PinChangeInterruptPins.h>
@@ -54,9 +57,11 @@ typedef struct {
     /* Flag indicates if landing light should be on */
     bool landing_light_active;
     bool brake_active;
+    bool thermometer_active;
+    float temperature;
 } state_t;
 
-static state_t current_state = { STANDBY, false, false };
+static state_t current_state = { STANDBY, false, false, false, 0.0f };
 
 /* Time in microseconds after which an RC PWM signal is considered stale */
 #define PWM_CYCLE_TIMEOUT_MICROS 20000
@@ -94,6 +99,16 @@ static uint64_t landing_channel_rise;
 static uint64_t brake_channel_rise;
 static uint64_t aux1_channel_rise;
 static uint64_t aux2_channel_rise;
+
+#define TEMPERATURE_SAMPLE_TIME_MILLIS 1000
+#define THERMOMETER_I2C_ADDRESS 0x5A
+IRTherm therm;
+static uint64_t last_thermometer_timestamp_millis;
+
+static bool i2c_device_available(byte address) {
+    Wire.beginTransmission(address);
+    return Wire.endTransmission() == 0;
+}
 
 void setup() {
     Serial.begin(250000);
@@ -135,6 +150,9 @@ void setup() {
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(BRAKE_CHANNEL_PIN), brake_channel_interrupt, CHANGE);
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX1_CHANNEL_PIN),  aux1_channel_interrupt,  CHANGE);
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX2_CHANNEL_PIN),  aux2_channel_interrupt,  CHANGE);
+
+    therm.begin();
+    therm.setUnit(TEMP_C);
 
     startup_blink();
     startup_buzz();
@@ -291,6 +309,22 @@ void loop() {
         current_state.brake_active = false;
     }
 
+    /* Read temperature, if available */
+    if ((millis() - last_thermometer_timestamp_millis) > TEMPERATURE_SAMPLE_TIME_MILLIS) {
+        if (i2c_device_available(THERMOMETER_I2C_ADDRESS)) {
+            if (therm.read()) {
+                current_state.thermometer_active = true;
+                current_state.temperature        = therm.object();
+            } else {
+                current_state.thermometer_active = false;
+                Serial.println("Could not read temperature from thermometer at 0x5A");
+            }
+        } else {
+            current_state.thermometer_active = false;
+        }
+        last_thermometer_timestamp_millis = millis();
+    }
+
     /* Update outputs with current state */
     update_test_pin(counter, &current_state);
 
@@ -329,6 +363,15 @@ void loop() {
     Serial.print("\t");
     Serial.print("AUX2 channel: ");
     Serial.print((long) aux2_channel_pulse_time);
+    Serial.print("\t");
+
+    Serial.print("Temperature: ");
+    if (current_state.thermometer_active) {
+        Serial.print(current_state.temperature);
+    } else {
+        Serial.print("Inactive");
+    }
+
     Serial.println();
 #endif
 
