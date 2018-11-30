@@ -244,38 +244,30 @@ void loop() {
 
         /* Check for stale pulse time readings */
         const uint64_t now = micros();
+        /* ignoring interrupt here, assumption is that it won't been triggered
+           since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds */
         if ((now - standby_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
                 standby_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
             standby_channel_pulse_time        = NO_SIGNAL;
             standby_channel_pulse_time_shared = NO_SIGNAL;
         }
         if ((now - landing_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
                 landing_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
             landing_channel_pulse_time        = NO_SIGNAL;
             landing_channel_pulse_time_shared = NO_SIGNAL;
         }
         if ((now - brake_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
                 brake_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
             brake_channel_pulse_time        = NO_SIGNAL;
             brake_channel_pulse_time_shared = NO_SIGNAL;
         }
         if ((now - aux1_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
                 aux1_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
             aux1_channel_pulse_time        = NO_SIGNAL;
             aux1_channel_pulse_time_shared = NO_SIGNAL;
         }
         if ((now - aux2_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
                 aux2_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
-            // ignoring interrupt here, assumption is that it won't been triggered
-            // since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds
             aux2_channel_pulse_time        = NO_SIGNAL;
             aux2_channel_pulse_time_shared = NO_SIGNAL;
         }
@@ -402,7 +394,7 @@ static void update_test_pin(uint64_t tick, state_t *state) {
                 case cycle_fraction(2, 10):    TEST_PIN.high(); break;
                 case cycle_fraction(3, 10):    TEST_PIN.low();  break;
                 case cycle_fraction(9, 10):    TEST_PIN.high(); break;
-                case cycle_fraction(9.25, 10): TEST_PIN.low();  break ;
+                case cycle_fraction(9.25, 10): TEST_PIN.low();  break;
             }
             break;
     }
@@ -411,8 +403,8 @@ static void update_test_pin(uint64_t tick, state_t *state) {
 static void updateOutput_D5(uint64_t tick, state_t *state) {
     if (state->mode == FLYING) {
         switch (tick) {
-            case 0:       D5_PIN.high(); break;
-            case cycle_fraction(1, 2):   D5_PIN.low();  break;
+            case 0:                    D5_PIN.high(); break;
+            case cycle_fraction(1, 2): D5_PIN.low();  break;
         }
     }
 }
@@ -420,21 +412,21 @@ static void updateOutput_D5(uint64_t tick, state_t *state) {
 static void updateOutput_D6(uint64_t tick, state_t *state) {
     if (state->mode == FLYING) {
         switch (tick) {
-            case 0:       D6_PIN.high(); break;
-            case cycle_fraction(1, 40):   D6_PIN.low();  break;
-            case cycle_fraction(4, 40):   D6_PIN.high();  break;
-            case cycle_fraction(5, 40):   D6_PIN.low();  break;
-            case cycle_fraction(6, 40):   D6_PIN.high();  break;
-            case cycle_fraction(7, 40):   D6_PIN.low();  break;
-            case cycle_fraction(8, 40):   D6_PIN.high();  break;
-            case cycle_fraction(9, 40):   D6_PIN.low();  break;
-            case cycle_fraction(10, 40):   D6_PIN.high();  break;
-            case cycle_fraction(11, 40):   D6_PIN.low();  break;
+            case 0:                      D6_PIN.high(); break;
+            case cycle_fraction(1, 40):  D6_PIN.low();  break;
+            case cycle_fraction(4, 40):  D6_PIN.high(); break;
+            case cycle_fraction(5, 40):  D6_PIN.low();  break;
+            case cycle_fraction(6, 40):  D6_PIN.high(); break;
+            case cycle_fraction(7, 40):  D6_PIN.low();  break;
+            case cycle_fraction(8, 40):  D6_PIN.high(); break;
+            case cycle_fraction(9, 40):  D6_PIN.low();  break;
+            case cycle_fraction(10, 40): D6_PIN.high(); break;
+            case cycle_fraction(11, 40): D6_PIN.low();  break;
         }
     } else if (state->mode == STANDBY) {
         switch (tick) {
-            case 0:       D6_PIN.high(); break;
-            case cycle_fraction(1, 2):   D6_PIN.low();  break;
+            case 0:                    D6_PIN.high(); break;
+            case cycle_fraction(1, 2): D6_PIN.low();  break;
         }
     }
 }
@@ -458,10 +450,10 @@ static void updateOutput_D9(uint64_t tick, state_t *state) {
 static void updateOutput_D10(uint64_t tick, state_t *state) {
     switch (tick) {
         case 0: D10_PIN.low(); break;
-        case cycle_fraction(5, 10): D10_PIN.high();  break;
-        case cycle_fraction(11, 20): D10_PIN.low(); break;
-        case cycle_fraction(12, 20): D10_PIN.high();  break;
-        case cycle_fraction(13, 20): D10_PIN.low(); break;
+        case cycle_fraction(5, 10):  D10_PIN.high(); break;
+        case cycle_fraction(11, 20): D10_PIN.low();  break;
+        case cycle_fraction(12, 20): D10_PIN.high(); break;
+        case cycle_fraction(13, 20): D10_PIN.low();  break;
     }
 }
 
