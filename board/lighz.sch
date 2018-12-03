@@ -135,12 +135,12 @@ D11_sig
 $Comp
 L Connector:Conn_01x02_Male J9
 U 1 1 5BD3A4F5
-P 5480 2800
-F 0 "J9" H 5452 2680 50  0000 R CNN
-F 1 "power" H 5452 2771 50  0000 R CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 5480 2800 50  0001 C CNN
-F 3 "~" H 5480 2800 50  0001 C CNN
-	1    5480 2800
+P 6560 2800
+F 0 "J9" H 6532 2680 50  0000 R CNN
+F 1 "power" H 6532 2771 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 6560 2800 50  0001 C CNN
+F 3 "~" H 6560 2800 50  0001 C CNN
+	1    6560 2800
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
@@ -182,8 +182,7 @@ F 3 "" H 5280 2800 50  0001 C CNN
 	1    5280 2800
 	1    0    0    -1  
 $EndComp
-Connection ~ 5280 2800
-Text GLabel 5230 2700 1    50   Input ~ 0
+Text GLabel 6360 2700 1    50   Input ~ 0
 VLiPo
 Text GLabel 7550 2280 0    50   Input ~ 0
 VLiPo
@@ -590,4 +589,39 @@ Text GLabel 4120 5900 0    50   Input ~ 0
 VLiPo2
 Text GLabel 4420 5900 2    50   Input ~ 0
 VLiPo
+$Comp
+L Regulator_Linear:MCP1700-5002E_TO92 U1
+U 1 1 5C059B12
+P 5580 2700
+F 0 "U1" H 5580 2458 50  0000 C CNN
+F 1 "MCP1700-5002E_TO92" H 5580 2549 50  0000 C CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 5580 2500 50  0001 C CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826C.pdf" H 5580 2700 50  0001 C CNN
+	1    5580 2700
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	6360 2700 5880 2700
+$Comp
+L power:GND #PWR033
+U 1 1 5C05D6E9
+P 6360 2800
+F 0 "#PWR033" H 6360 2550 50  0001 C CNN
+F 1 "GND" H 6365 2627 50  0000 C CNN
+F 2 "" H 6360 2800 50  0001 C CNN
+F 3 "" H 6360 2800 50  0001 C CNN
+	1    6360 2800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR014
+U 1 1 5C05D723
+P 5580 3000
+F 0 "#PWR014" H 5580 2750 50  0001 C CNN
+F 1 "GND" H 5585 2827 50  0000 C CNN
+F 2 "" H 5580 3000 50  0001 C CNN
+F 3 "" H 5580 3000 50  0001 C CNN
+	1    5580 3000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
