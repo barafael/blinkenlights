@@ -21,13 +21,13 @@ The PCB is designed in KiCad.
 If you have any suggestions or spot an error somewhere, please let me know!
 
 Render of PCB:
-![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz_pcb2_rendered.png)
+![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz_pcb3_rendered.png)
+
+PCB in pcbnew:
+![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz_pcb3.png)
 
 Schematic:
 ![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz-page1.png)
-
-PCB in pcbnew:
-![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz_pcb2.png)
 
 MOSFET driver schematic:
 ![alt text](https://github.com/barafael/lighz/blob/master/board/images/lighz-page2.png)
