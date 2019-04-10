@@ -224,7 +224,6 @@ void loop() {
         brake_channel_rise   = brake_channel_rise_shared;
         aux1_channel_rise    = aux1_channel_rise_shared;
         aux2_channel_rise    = aux2_channel_rise_shared;
-        interrupts();
 
         /* Check for stale pulse time readings */
         const uint64_t now = micros();
@@ -255,6 +254,8 @@ void loop() {
             aux2_channel_pulse_time        = NO_SIGNAL;
             aux2_channel_pulse_time_shared = NO_SIGNAL;
         }
+
+        interrupts();
     }
 
     /* Read if signal present */
