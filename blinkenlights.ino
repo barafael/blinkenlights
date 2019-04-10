@@ -1,6 +1,3 @@
-#include <Wire.h>
-#include <SparkFunMLX90614.h>
-
 #include <PinChangeInterrupt.h>
 #include <PinChangeInterruptBoards.h>
 #include <PinChangeInterruptPins.h>
@@ -11,11 +8,11 @@
 static DigitalPin<13> TEST_PIN;
 
 static DigitalPin<5>  D5_PIN;
-static DigitalPin<6>  D6_PIN;
+static int D6_PIN = 6;
 static DigitalPin<8>  D8_PIN;
 static DigitalPin<9>  D9_PIN;
-static DigitalPin<10> D10_PIN;
-static DigitalPin<11> D11_PIN;
+static int D10_PIN = 10;
+static int D11_PIN = 11;
 static DigitalPin<14> D14_PIN;
 static DigitalPin<15> D15_PIN;
 
@@ -34,8 +31,8 @@ static const int AUX2_CHANNEL_PIN          = A2;
 
 /* These thresholds define when a mode should be active
    (compared against RC PWM value on resp. pin) */
-static const uint64_t STANDBY_MODE_THRESHOLD  = 1500;
-static const uint64_t LANDING_LIGHT_THRESHOLD = 1500;
+static const uint64_t STANDBY_MODE_THRESHOLD  = 1900;
+static const uint64_t LANDING_LIGHT_THRESHOLD = 1800;
 static const uint64_t BRAKE_THRESHOLD         = 1500;
 
 /* Counter for main loop,
@@ -57,11 +54,9 @@ typedef struct {
     /* Flag indicates if landing light should be on */
     bool landing_light_active;
     bool brake_active;
-    bool thermometer_active;
-    float temperature;
 } state_t;
 
-static state_t current_state = { STANDBY, false, false, false, 0.0f };
+static state_t current_state = { FLYING, false, false };
 
 /* Time in microseconds after which an RC PWM signal is considered stale */
 #define PWM_CYCLE_TIMEOUT_MICROS 20000
@@ -100,47 +95,39 @@ static uint64_t brake_channel_rise;
 static uint64_t aux1_channel_rise;
 static uint64_t aux2_channel_rise;
 
-#define TEMPERATURE_SAMPLE_TIME_MILLIS 1000
-#define THERMOMETER_I2C_ADDRESS 0x5A
-IRTherm therm;
-static uint64_t last_thermometer_timestamp_millis;
-
-static bool i2c_device_available(byte address) {
-    Wire.beginTransmission(address);
-    return Wire.endTransmission() == 0;
-}
-
 void setup() {
     Serial.begin(250000);
 
+    /* Set output pins */
     TEST_PIN.mode(OUTPUT);
 
     D5_PIN.mode(OUTPUT);
-    D6_PIN.mode(OUTPUT);
+    pinMode(D6_PIN, OUTPUT);
     D8_PIN.mode(OUTPUT);
     D9_PIN.mode(OUTPUT);
-    D10_PIN.mode(OUTPUT);
-    D11_PIN.mode(OUTPUT);
+    pinMode(D10_PIN, OUTPUT);
+    pinMode(D11_PIN, OUTPUT);
     D14_PIN.mode(OUTPUT);
     D15_PIN.mode(OUTPUT);
 
-    /* Turn off the lights */
-    TEST_PIN.low();
-
-    D5_PIN.low();
-    D6_PIN.low();
-    D8_PIN.low();
-    D9_PIN.low();
-    D10_PIN.low();
-    D11_PIN.low();
-    D14_PIN.low();
-    D15_PIN.low();
-
+    /* Set input pins */
     pinMode(STANDBY_MODE_CHANNEL_PIN,  INPUT);
     pinMode(LANDING_LIGHT_CHANNEL_PIN, INPUT);
     pinMode(BRAKE_CHANNEL_PIN,         INPUT);
     pinMode(AUX1_CHANNEL_PIN,          INPUT);
     pinMode(AUX2_CHANNEL_PIN,          INPUT);
+
+    /* Turn off the lights */
+    D5_PIN.low();
+    analogWrite(D6_PIN, 0);
+    D8_PIN.low();
+    D9_PIN.low();
+    analogWrite(D10_PIN, 0);
+    analogWrite(D11_PIN, 0);
+    D14_PIN.low();
+    D15_PIN.low();
+
+    TEST_PIN.low();
 
     /* Attach interrupts for pulse time measurement */
     attachInterrupt(digitalPinToInterrupt(STANDBY_MODE_CHANNEL_PIN),  standby_channel_interrupt, CHANGE);
@@ -151,11 +138,8 @@ void setup() {
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX1_CHANNEL_PIN),  aux1_channel_interrupt,  CHANGE);
     attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(AUX2_CHANNEL_PIN),  aux2_channel_interrupt,  CHANGE);
 
-    therm.begin();
-    therm.setUnit(TEMP_C);
-
     startup_blink();
-    startup_buzz();
+    //startup_buzz();
 }
 
 void startup_blink() {
@@ -163,15 +147,15 @@ void startup_blink() {
     delay(50);
     D5_PIN.high();
     delay(50);
-    D6_PIN.high();
+    analogWrite(D6_PIN, 100);
     delay(50);
     D8_PIN.high();
     delay(50);
     D9_PIN.high();
     delay(50);
-    D10_PIN.high();
+    analogWrite(D10_PIN, 100);
     delay(50);
-    D11_PIN.high();
+    analogWrite(D11_PIN, 100);
     delay(50);
     D14_PIN.high();
     delay(50);
@@ -180,11 +164,11 @@ void startup_blink() {
 
     TEST_PIN.low();
     D5_PIN.low();
-    D6_PIN.low();
+    analogWrite(D6_PIN, 0);
     D8_PIN.low();
     D9_PIN.low();
-    D10_PIN.low();
-    D11_PIN.low();
+    analogWrite(D10_PIN, 0);
+    analogWrite(D11_PIN, 0);
     D14_PIN.low();
     D15_PIN.low();
 }
@@ -244,7 +228,7 @@ void loop() {
 
         /* Check for stale pulse time readings */
         const uint64_t now = micros();
-        /* ignoring interrupt here, assumption is that it won't been triggered
+        /* Ignoring interrupt here, assumption is that it won't be triggered
            since that has not happened for PWM_CYCLE_TIMEOUT_MICROS microseconds */
         if ((now - standby_channel_rise) > PWM_CYCLE_TIMEOUT_MICROS ||
                 standby_channel_pulse_time > PWM_PULSE_TIMEOUT_MICROS) {
@@ -301,22 +285,6 @@ void loop() {
         current_state.brake_active = false;
     }
 
-    /* Read temperature, if available */
-    if ((millis() - last_thermometer_timestamp_millis) > TEMPERATURE_SAMPLE_TIME_MILLIS) {
-        if (i2c_device_available(THERMOMETER_I2C_ADDRESS)) {
-            if (therm.read()) {
-                current_state.thermometer_active = true;
-                current_state.temperature        = therm.object();
-            } else {
-                current_state.thermometer_active = false;
-                Serial.println("Could not read temperature from thermometer at 0x5A");
-            }
-        } else {
-            current_state.thermometer_active = false;
-        }
-        last_thermometer_timestamp_millis = millis();
-    }
-
     /* Update outputs with current state */
     update_test_pin(counter, &current_state);
 
@@ -336,7 +304,7 @@ void loop() {
         counter = 0;
     }
 
-#define DEBUG_PRINT
+    //#define DEBUG_PRINT
 #ifdef DEBUG_PRINT
     Serial.print("Counter: ");
     Serial.print((long) counter);
@@ -355,15 +323,6 @@ void loop() {
     Serial.print("\t");
     Serial.print("AUX2 channel: ");
     Serial.print((long) aux2_channel_pulse_time);
-    Serial.print("\t");
-
-    Serial.print("Temperature: ");
-    if (current_state.thermometer_active) {
-        Serial.print(current_state.temperature);
-    } else {
-        Serial.print("Inactive");
-    }
-
     Serial.println();
 #endif
 
@@ -372,8 +331,8 @@ void loop() {
 }
 
 /* A macro to statically compute a fraction of the steps for a complete cycle.
- * By computing the fraction this way, a blink pattern code is independent of the
- * number of steps per cycle. */
+   By computing the fraction this way, a blink pattern code is independent of the
+   number of steps per cycle. */
 #define cycle_fraction(a, b) (int) (((double) (a) / (double) (b)) * COUNTER_MAX)
 
 /* Update outputs */
@@ -403,8 +362,10 @@ static void update_test_pin(uint64_t tick, state_t *state) {
 static void updateOutput_D5(uint64_t tick, state_t *state) {
     if (state->mode == FLYING) {
         switch (tick) {
-            case 0:                    D5_PIN.high(); break;
-            case cycle_fraction(1, 2): D5_PIN.low();  break;
+            case cycle_fraction(0, 10): D5_PIN.high(); break;
+            case cycle_fraction(1, 10): D5_PIN.low();  break;
+            case cycle_fraction(2, 10): D5_PIN.high(); break;
+            case cycle_fraction(3, 10): D5_PIN.low();  break;
         }
     }
 }
@@ -412,21 +373,21 @@ static void updateOutput_D5(uint64_t tick, state_t *state) {
 static void updateOutput_D6(uint64_t tick, state_t *state) {
     if (state->mode == FLYING) {
         switch (tick) {
-            case 0:                      D6_PIN.high(); break;
-            case cycle_fraction(1, 40):  D6_PIN.low();  break;
-            case cycle_fraction(4, 40):  D6_PIN.high(); break;
-            case cycle_fraction(5, 40):  D6_PIN.low();  break;
-            case cycle_fraction(6, 40):  D6_PIN.high(); break;
-            case cycle_fraction(7, 40):  D6_PIN.low();  break;
-            case cycle_fraction(8, 40):  D6_PIN.high(); break;
-            case cycle_fraction(9, 40):  D6_PIN.low();  break;
-            case cycle_fraction(10, 40): D6_PIN.high(); break;
-            case cycle_fraction(11, 40): D6_PIN.low();  break;
+            case cycle_fraction(0, 40):  analogWrite(D6_PIN, 100); break;
+            case cycle_fraction(1, 40):  analogWrite(D6_PIN, 0);   break;
+            case cycle_fraction(4, 40):  analogWrite(D6_PIN, 100); break;
+            case cycle_fraction(5, 40):  analogWrite(D6_PIN, 0);   break;
+            case cycle_fraction(6, 40):  analogWrite(D6_PIN, 100); break;
+            case cycle_fraction(7, 40):  analogWrite(D6_PIN, 0);   break;
+            case cycle_fraction(8, 40):  analogWrite(D6_PIN, 100); break;
+            case cycle_fraction(9, 40):  analogWrite(D6_PIN, 0);   break;
+            case cycle_fraction(10, 40): analogWrite(D6_PIN, 100); break;
+            case cycle_fraction(11, 40): analogWrite(D6_PIN, 0);   break;
         }
     } else if (state->mode == STANDBY) {
         switch (tick) {
-            case 0:                    D6_PIN.high(); break;
-            case cycle_fraction(1, 2): D6_PIN.low();  break;
+            case cycle_fraction(0, 2): analogWrite(D6_PIN, 100); break;
+            case cycle_fraction(1, 2): analogWrite(D6_PIN, 0);   break;
         }
     }
 }
@@ -449,27 +410,30 @@ static void updateOutput_D9(uint64_t tick, state_t *state) {
 
 static void updateOutput_D10(uint64_t tick, state_t *state) {
     switch (tick) {
-        case 0: D10_PIN.low(); break;
-        case cycle_fraction(5, 10):  D10_PIN.high(); break;
-        case cycle_fraction(11, 20): D10_PIN.low();  break;
-        case cycle_fraction(12, 20): D10_PIN.high(); break;
-        case cycle_fraction(13, 20): D10_PIN.low();  break;
+        case cycle_fraction(0,  20): analogWrite(D10_PIN, 0);   break;
+        case cycle_fraction(8,  20): analogWrite(D10_PIN, 100); break;
+        case cycle_fraction(9,  20): analogWrite(D10_PIN, 0);   break;
+        case cycle_fraction(10, 20): analogWrite(D10_PIN, 100); break;
+        case cycle_fraction(11, 20): analogWrite(D10_PIN, 0);   break;
     }
 }
 
 static void updateOutput_D11(uint64_t tick, state_t *state) {
     if (state->landing_light_active) {
-        D11_PIN.high();
+        analogWrite(D11_PIN, 100);
     } else {
-        D11_PIN.low();
+        analogWrite(D11_PIN, 0);
     }
 }
 
 static void updateOutput_D14(uint64_t tick, state_t *state) {
     if (state->mode == FLYING) {
         switch (tick) {
-            case 0:                    D14_PIN.low();  break;
-            case cycle_fraction(1, 2): D14_PIN.high(); break;
+            case cycle_fraction(0,  4):  D14_PIN.low();  break;
+            case cycle_fraction(3,  4):  D14_PIN.high(); break;
+            case cycle_fraction(31, 40): D14_PIN.low();  break;
+            case cycle_fraction(33, 40): D14_PIN.high(); break;
+            case cycle_fraction(34, 40): D14_PIN.low();  break;
         }
     }
 }
@@ -477,10 +441,10 @@ static void updateOutput_D14(uint64_t tick, state_t *state) {
 static void updateOutput_D15(uint64_t tick, state_t *state) {
     if (state->mode == FLYING) {
         switch (tick) {
-            case 0: D15_PIN.high(); break;
-            case cycle_fraction(1, 4): D15_PIN.high(); break;
-            case cycle_fraction(1, 2): D15_PIN.high(); break;
-            case cycle_fraction(3, 4): D15_PIN.high(); break;
+            case cycle_fraction(5, 10):  D15_PIN.high(); break;
+            case cycle_fraction(6, 10):  D15_PIN.low();  break;
+            case cycle_fraction(7, 10):  D15_PIN.high(); break;
+            case cycle_fraction(8, 10):  D15_PIN.low();  break;
         }
     } else if (state->mode == STANDBY) {
         switch (tick) {
